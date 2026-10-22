@@ -401,8 +401,8 @@ legend{float:left;width:100%;padding:0;margin-bottom:12px;font-size:13px;font-we
     }
   };
   var DISC = 'Unverbindliche Übersicht zur Veranschaulichung. Maßgeblich sind allein Antrag, Versicherungsschein und Versicherungsbedingungen.';
-  // Status je Baustein: 0 Lücke, 1 abgesichert, 2 vorhanden, aber prüfen
-  var STATUS = ['Lücke', 'Abgesichert', 'Prüfen'];
+  // Status je Baustein: 0 Lücke, 1 abgesichert, 2 vorhanden, aber überprüfen
+  var STATUS = ['Lücke', 'Abgesichert', 'Überprüfen'];
   // Info-Texte je Baustein (Schlüssel = Kacheltitel): [Warum wichtig, Kernleistung]
   var INFO = {
     'Berufshaftpflicht': ['Ein einziger Behandlungsfehler kann Schadenersatz- und Schmerzensgeldforderungen in Millionenhöhe auslösen, etwa bei bleibenden Gesundheitsschäden. Für Vertragsärzte ist eine ausreichende Berufshaftpflicht zudem gesetzlich vorgeschrieben (§ 95e SGB V, mindestens 3 Mio. € je Versicherungsfall).',
@@ -746,7 +746,7 @@ legend{float:left;width:100%;padding:0;margin-bottom:12px;font-size:13px;font-we
     t = s.appendChild(el('table'));
     var names = function (s) { return M.items.filter(function (_, i) { return covered[i] === s; }).map(function (it) { return it[2] ? 'BU ' + it[0] : it[0]; }).join(', ') || '–'; };
     row(t, 'Bereits abgesichert', names(1));
-    row(t, 'Vorhanden – prüfen', names(2));
+    row(t, 'Bestehende Verträge – überprüfen', names(2));
     row(t, 'Lücken – anzubieten', names(0));
     row(t, 'Optionale Zusätze gewünscht', chosenAddons().map(function (a) { return a[0]; }).join(', ') || '–');
   }
@@ -756,7 +756,7 @@ legend{float:left;width:100%;padding:0;margin-bottom:12px;font-size:13px;font-we
     M.items.forEach(function (it, i) {
       if (!covered[i]) return;
       var n = fullName(it);
-      f.push([n + ' (' + STATUS[covered[i]] + ')', 'sub'], [n + ' – Versicherer', 'text', null, 'Versicherer'],
+      f.push([n + (covered[i] === 2 ? ' – Vertrag überprüfen' : ' – abgesichert'), 'sub'], [n + ' – Versicherer', 'text', null, 'Versicherer'],
         [n + ' – Versicherungsnummer', 'text', null, 'Versicherungsnummer'], [n + ' – Ablauf', 'text', null, 'Ablauf / Hauptfälligkeit']);
     });
     var g = FORM[mode].slice();
@@ -800,7 +800,7 @@ legend{float:left;width:100%;padding:0;margin-bottom:12px;font-size:13px;font-we
     var steps = [];
     M.items.forEach(function (it, i) {
       if (covered[i] === 0) steps.push('Angebot erstellen: ' + fullName(it));
-      if (covered[i] === 2) steps.push('Bestehenden Vertrag prüfen (Umfang, Summen, Aktualität): ' + fullName(it));
+      if (covered[i] === 2) steps.push('Bestehenden Vertrag überprüfen (Umfang, Summen, Aktualität): ' + fullName(it));
     });
     chosenAddons().forEach(function (it) { steps.push('Angebot ergänzen: ' + it[0]); });
     s.appendChild(el('h2', 'Nächste Schritte'));
