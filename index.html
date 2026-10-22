@@ -1,0 +1,502 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<!-- iPad: vom Home-Bildschirm als Vollbild-App starten -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Versicherungsschirm">
+<title>Versicherungsschirm Arztpraxis</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700;800&display=swap">
+<style>
+/* HORBACH CI: FreshGreen #b4c800 · Basil #697d0f · Amber #ecbd00 · Indigo #006e96 · Berry #af005f · WarmGrey #827869 */
+*{box-sizing:border-box}
+body{margin:0;background:#f4f1ec;font-family:Assistant,sans-serif;color:#2b2723}
+.stage{width:1280px;margin:0 auto;position:relative;overflow:hidden;background:#fff;transform-origin:top left}
+[data-p]{fill:#d9d3cb} /* Grundfarbe vor JS, sonst blitzt der Schirm beim Laden schwarz */
+.panel{fill:#d9d3cb;stroke:#fff;stroke-width:1.4;transition:fill .8s ease}
+.panel.on.pa{fill:#697d0f}.panel.on.pb{fill:#b4c800}
+.tear{opacity:1;transition:opacity .6s ease}.tear.off{opacity:0}
+.pnum{font:700 13px Assistant,sans-serif;fill:#6b6259;transition:fill .6s ease}.pnum.on{fill:#fff}
+.lane{position:absolute;top:0;width:2px;pointer-events:none}
+.drop{position:absolute;left:0;top:-30px;width:2px;height:16px;border-radius:2px;background:rgba(0,110,150,.5);transform-origin:50% 100%;animation:fall linear infinite}
+.drop.leak{background:rgba(175,0,95,.72)}
+@keyframes fall{0%{top:-30px;opacity:0;transform:scale(1,1)}8%{opacity:1}86%{top:calc(100% - 16px);opacity:1;transform:scale(1,1)}100%{top:calc(100% - 16px);opacity:0;transform:scale(4,.15)}}
+.chip{position:relative;display:flex;align-items:center;gap:12px;min-height:84px;padding:30px 14px 12px;border-radius:12px;border:1.5px solid #e3ded7;background:#fff;font-family:inherit;text-align:left;cursor:pointer;transition:border-color .4s,background-color .4s}
+.chip:hover{border-color:#827869}
+.chip:focus-visible,.btn:focus-visible{outline:3px solid #006e96;outline-offset:2px}
+.chip .num{flex:none;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;color:#5d554c;background:#eeeae4;transition:background-color .4s,color .4s}
+.chip.on{border-color:#697d0f;background:#f6f8e6}.chip.on .num{background:#697d0f;color:#fff}
+.chip>span:nth-child(2){flex:1;min-width:0}
+.chip .t{display:block;font-weight:700;font-size:15px;line-height:1.2;color:#2b2723}
+.chip .r{display:block;font-size:13px;line-height:1.3;color:#5d554c;margin-top:2px}
+.chip .pill{position:absolute;top:10px;right:12px;white-space:nowrap;font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:4px 8px;border-radius:999px;color:#af005f;background:#f8e7ef}
+.chip.on .pill{color:#fff;background:#697d0f}
+.chip .grp{position:absolute;top:11px;left:14px;font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:#006e96}
+.chip.addon{border-style:dashed}.chip.addon .pill{color:#5d554c;background:#eeeae4}
+.chip.addon.on{border-style:solid;border-color:#006e96;background:#e9f2f6}
+.chip.addon.on .num,.chip.addon.on .pill{background:#006e96;color:#fff}
+.btn{white-space:nowrap;display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 18px;border-radius:10px;font:700 15px Assistant,sans-serif;cursor:pointer}
+.btn.primary{background:#006e96;color:#fff;border:none}.btn.primary:hover{background:#005a7b}
+.btn.ghost{background:#fff;color:#2b2723;border:1.5px solid #cfc8bf}.btn.ghost:hover{border-color:#827869}
+.grid4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+#badge{display:none}
+.seg{display:flex;gap:4px;padding:4px;border-radius:10px;background:#eeeae4}
+.seg button{flex:1;min-height:36px;border:0;border-radius:8px;background:transparent;font:700 14px Assistant,sans-serif;color:#5d554c;cursor:pointer}
+.seg button[aria-pressed="true"]{background:#fff;color:#2b2723;box-shadow:0 1px 2px rgba(0,0,0,.12)}
+.seg button:focus-visible{outline:3px solid #006e96;outline-offset:2px}
+dialog{width:min(880px,94vw);max-height:92vh;border:0;border-radius:14px;padding:0;font-family:Assistant,sans-serif;color:#2b2723}
+dialog::backdrop{background:rgba(43,39,35,.5)}
+.dlg-h{padding:22px 24px 6px}.dlg-h h2{margin:0;font-size:24px;font-weight:800}.dlg-h p{margin:4px 0 0;font-size:14px;color:#5d554c}
+.dlg-b{padding:12px 24px;overflow:auto;max-height:calc(92vh - 170px)}
+.dlg-f{padding:14px 24px;display:flex;justify-content:flex-end;gap:10px;border-top:1.5px solid #eeeae4}
+fieldset{border:0;margin:0 0 18px;padding:0}
+legend{padding:0;margin-bottom:10px;font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#697d0f}
+.fgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.fgrid label{display:flex;flex-direction:column;gap:4px;font-size:13px;font-weight:600;color:#5d554c}
+.fgrid .wide{grid-column:1/-1}
+.fgrid input,.fgrid select,.fgrid textarea{font:400 15px Assistant,sans-serif;color:#2b2723;min-height:40px;padding:8px 10px;border:1.5px solid #cfc8bf;border-radius:8px;background:#fff}
+.fgrid input:focus-visible,.fgrid select:focus-visible,.fgrid textarea:focus-visible{outline:3px solid #006e96;outline-offset:1px}
+#sheet{display:none}
+@page{margin:16mm}
+@media print{
+  .stage,dialog{display:none!important}
+  body{background:#fff;height:auto!important}
+  #sheet{display:block;font-size:13px;color:#2b2723}
+  #sheet h1{font-size:22px;margin:0 0 2px}#sheet h2{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:#697d0f;margin:18px 0 6px}
+  #sheet table{width:100%;border-collapse:collapse}#sheet td{padding:5px 8px;border-bottom:1px solid #e3ded7;vertical-align:top}
+  #sheet td:first-child{width:38%;color:#5d554c}
+}
+@media (prefers-reduced-motion:reduce){.drop{animation:none;opacity:0}.panel,.tear,.pnum,.chip,.chip .num{transition:none}}
+</style>
+</head>
+<body>
+<div class="stage" id="stage">
+
+<svg aria-hidden="true" width="96" height="64" viewBox="0 0 96 64" style="position:absolute;top:0;right:0">
+<rect x="58" y="-12" width="26" height="26" transform="rotate(45 71 1)" fill="#b4c800"/>
+<rect x="76" y="6" width="18" height="18" transform="rotate(45 85 15)" fill="#006e96"/>
+<rect x="40" y="6" width="14" height="14" transform="rotate(45 47 13)" fill="#ecbd00"/>
+<rect x="64" y="30" width="12" height="12" transform="rotate(45 70 36)" fill="#697d0f"/>
+</svg>
+
+<header style="display:flex;justify-content:space-between;align-items:flex-end;gap:40px;padding:28px 56px 0">
+<div style="display:flex;flex-direction:column;gap:8px;max-width:660px">
+<div id="eyebrow" style="font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#697d0f"></div>
+<h1 id="title" style="margin:0;font-size:36px;line-height:1.08;font-weight:800"></h1>
+<p id="lead" style="margin:0;font-size:18px;line-height:1.45;color:#5d554c"></p>
+</div>
+<div style="flex:none;width:400px;display:flex;flex-direction:column;gap:12px;padding:18px 20px;border:1.5px solid #e3ded7;border-radius:14px">
+<div class="seg" role="group" aria-label="Ansicht">
+<button type="button" data-mode="praxis">Praxis</button>
+<button type="button" data-mode="privat">+ Privater Rahmen</button>
+</div>
+<button type="button" class="btn ghost" id="capture" style="justify-content:center">Daten für Angebot aufnehmen</button>
+</div>
+</header>
+
+<div style="height:422px;margin-top:4px;overflow:hidden">
+<div style="position:relative;width:1280px;height:680px;transform:scale(.62);transform-origin:top center">
+<svg id="scene" role="img" aria-label="Arztpraxis unter einem Regenschirm; ungeschützte Segmente sind eingerissen" width="1280" height="680" viewBox="0 0 1280 680" style="position: absolute; left: 0; top: 0">
+<rect x="0" y="646" width="1280" height="34" fill="#efebe5"></rect>
+<line x1="0" y1="646" x2="1280" y2="646" stroke="#cfc8bf" stroke-width="2"></line>
+
+<path d="M640 382 L640 448 Q640 463 625 463 Q611 463 611 451" fill="none" stroke="#4a443d" stroke-width="6" stroke-linecap="round"></path>
+<line x1="640" y1="122" x2="640" y2="94" stroke="#4a443d" stroke-width="5" stroke-linecap="round"></line>
+
+<path data-p="0" d="M640 120 C348.8 120.0 120.0 220.8 120.0 360.0 Q162.4 334.0 204.8 366.6 C204.8 223.6 396.3 120.0 640 120Z"></path>
+<path data-p="1" d="M640 120 C396.3 120.0 204.8 223.6 204.8 366.6 Q265.5 340.6 326.2 374.0 C326.2 226.7 464.2 120.0 640 120Z"></path>
+<path data-p="2" d="M640 120 C464.2 120.0 326.2 226.7 326.2 374.0 Q400.8 348.0 475.5 379.8 C475.5 229.1 547.9 120.0 640 120Z"></path>
+<path data-p="3" d="M640 120 C547.9 120.0 475.5 229.1 475.5 379.8 Q557.8 353.8 640.0 382.0 C640.0 230.0 640.0 120.0 640 120Z"></path>
+<path data-p="4" d="M640 120 C640.0 120.0 640.0 230.0 640.0 382.0 Q722.2 353.8 804.5 379.8 C804.5 229.1 732.1 120.0 640 120Z"></path>
+<path data-p="5" d="M640 120 C732.1 120.0 804.5 229.1 804.5 379.8 Q879.2 348.0 953.8 374.0 C953.8 226.7 815.8 120.0 640 120Z"></path>
+<path data-p="6" d="M640 120 C815.8 120.0 953.8 226.7 953.8 374.0 Q1014.5 340.6 1075.2 366.6 C1075.2 223.6 883.7 120.0 640 120Z"></path>
+<path data-p="7" d="M640 120 C883.7 120.0 1075.2 223.6 1075.2 366.6 Q1117.6 334.0 1160.0 360.0 C1160.0 220.8 931.2 120.0 640 120Z"></path>
+
+<g data-t="0" fill="#ffffff" stroke="#827869" stroke-width="1.4" stroke-linejoin="round">
+<polygon points="206.3,285.0 202.5,298.6 189.5,306.5 173.3,305.2 164.8,292.2 162.8,277.1 178.5,273.3 188.8,267.0 204.2,270.0"></polygon>
+<polyline fill="none" stroke="#ffffff" stroke-width="2.6" points="185.5,270.6 189.0,246.7 212.9,222.8 253.0,198.9 306.4,175.0"></polyline>
+<polyline fill="none" stroke="#ffffff" stroke-width="2.2" points="193.0,299.4 188.0,310.9 188.8,322.5 190.3,334.0"></polyline>
+<polyline fill="none" stroke="#ffffff" stroke-width="1.8" points="170.5,287.4 160.8,309.2 155.1,331.0"></polyline>
+</g>
+<g data-t="1" fill="#ffffff" stroke="#827869" stroke-width="1.4" stroke-linejoin="round">
+<polygon points="306.1,285.0 307.9,299.8 290.5,306.1 276.5,297.9 260.2,292.5 268.6,280.0 273.4,267.8 289.0,270.7 298.5,276.5"></polygon>
+<polyline fill="none" stroke="#ffffff" stroke-width="2.6" points="285.8,270.6 298.0,246.7 288.5,222.8 320.3,198.9 364.8,175.0"></polyline>
+<polyline fill="none" stroke="#ffffff" stroke-width="2.2" points="294.8,299.4 305.3,313.1 299.4,326.9 312.4,340.6"></polyline>
+<polyline fill="none" stroke="#ffffff" stroke-width="1.8" points="267.8,287.4 268.9,309.2 273.9,331.0"></polyline>
+</g>
+<g data-t="2" fill="#ffffff" stroke="#827869" stroke-width="1.4" stroke-linejoin="round">
+<polygon points="434.4,285.0 437.5,300.0 419.7,305.3 400.4,305.5 388.3,292.8 395.9,279.4 404.5,270.2 418.4,270.2 429.3,275.5"></polygon>
+<polyline fill="none" stroke="#ffffff" stroke-width="2.6" points="415.2,270.6 397.9,246.7 390.1,222.8 413.6,198.9 445.5,175.0"></polyline>
+<polyline fill="none" stroke="#ffffff" stroke-width="2.2" points="424.2,299.4 430.2,315.6 424.7,331.8 418.3,348.0"></polyline>
+<polyline fill="none" stroke="#ffffff" stroke-width="1.8" points="397.2,287.4 408.0,309.2 407.3,331.0"></polyline>
+</g>
+<g data-t="3" fill="#ffffff" stroke="#827869" stroke-width="1.4" stroke-linejoin="round">
+<polygon points="583.7,285.0 580.6,296.8 567.5,305.5 554.3,297.0 535.1,293.1 547.2,280.4 549.7,266.6 567.8,263.0 575.8,276.4"></polygon>
+<polyline fill="none" stroke="#ffffff" stroke-width="2.6" points="563.0,270.6 575.4,246.7 569.6,222.8 573.0,198.9 551.8,175.0"></polyline>
+<polyline fill="none" stroke="#ffffff" stroke-width="2.2" points="572.0,299.4 555.2,317.5 543.4,335.7 560.2,353.8"></polyline>
+<polyline fill="none" stroke="#ffffff" stroke-width="1.8" points="545.0,287.4 533.7,309.2 543.2,331.0"></polyline>
+</g>
+<g data-t="4" fill="#ffffff" stroke="#827869" stroke-width="1.4" stroke-linejoin="round">
+<polygon points="746.1,285.0 739.4,300.0 720.7,301.7 706.4,299.7 694.9,291.5 691.7,277.6 708.1,272.6 721.7,264.0 737.9,271.0"></polygon>
+<polyline fill="none" stroke="#ffffff" stroke-width="2.6" points="717.0,270.6 732.5,246.7 712.6,222.8 731.8,198.9 714.2,175.0"></polyline>
+<polyline fill="none" stroke="#ffffff" stroke-width="2.2" points="726.0,299.4 720.1,317.5 724.2,335.7 739.7,353.8"></polyline>
+<polyline fill="none" stroke="#ffffff" stroke-width="1.8" points="699.0,287.4 693.1,309.2 708.8,331.0"></polyline>
+</g>
+<g data-t="5" fill="#ffffff" stroke="#827869" stroke-width="1.4" stroke-linejoin="round">
+<polygon points="888.7,285.0 880.7,295.7 868.4,301.4 855.4,298.1 848.3,289.8 847.4,279.9 851.9,267.1 870.0,261.4 879.1,275.4"></polygon>
+<polyline fill="none" stroke="#ffffff" stroke-width="2.6" points="864.8,270.6 846.9,246.7 866.2,222.8 866.4,198.9 834.5,175.0"></polyline>
+<polyline fill="none" stroke="#ffffff" stroke-width="2.2" points="873.8,299.4 864.9,315.6 868.1,331.8 879.2,348.0"></polyline>
+<polyline fill="none" stroke="#ffffff" stroke-width="1.8" points="846.8,287.4 845.3,309.2 842.7,331.0"></polyline>
+</g>
+<g data-t="6" fill="#ffffff" stroke="#827869" stroke-width="1.4" stroke-linejoin="round">
+<polygon points="1011.4,285.0 1016.3,299.8 997.1,298.3 982.6,301.0 968.0,292.6 977.0,280.0 981.0,266.7 999.3,261.9 1013.3,272.1"></polygon>
+<polyline fill="none" stroke="#ffffff" stroke-width="2.6" points="994.2,270.6 1003.6,246.7 990.7,222.8 959.7,198.9 915.2,175.0"></polyline>
+<polyline fill="none" stroke="#ffffff" stroke-width="2.2" points="1003.2,299.4 1012.9,313.1 1007.1,326.9 1005.8,340.6"></polyline>
+<polyline fill="none" stroke="#ffffff" stroke-width="1.8" points="976.2,287.4 990.2,309.2 1000.1,331.0"></polyline>
+</g>
+<g data-t="7" fill="#ffffff" stroke="#827869" stroke-width="1.4" stroke-linejoin="round">
+<polygon points="1119.2,285.0 1108.9,296.6 1097.8,303.2 1083.5,303.3 1076.5,291.3 1078.5,279.4 1085.3,269.8 1097.2,270.4 1108.3,273.9"></polygon>
+<polyline fill="none" stroke="#ffffff" stroke-width="2.6" points="1094.5,270.6 1097.6,246.7 1067.1,222.8 1027.0,198.9 973.6,175.0"></polyline>
+<polyline fill="none" stroke="#ffffff" stroke-width="2.2" points="1102.0,299.4 1098.8,310.9 1090.5,322.5 1086.0,334.0"></polyline>
+<polyline fill="none" stroke="#ffffff" stroke-width="1.8" points="1079.5,287.4 1085.1,309.2 1092.5,331.0"></polyline>
+</g>
+
+
+<g text-anchor="middle">
+<text data-n="0" x="165" y="343">1</text>
+<text data-n="1" x="269" y="350">2</text>
+<text data-n="2" x="404" y="357">3</text>
+<text data-n="3" x="559" y="363">4</text>
+<text data-n="4" x="721" y="363">5</text>
+<text data-n="5" x="876" y="357">6</text>
+<text data-n="6" x="1011" y="350">7</text>
+<text data-n="7" x="1115" y="343">8</text>
+</g>
+
+<g id="bu">
+<path d="M806 398 v10 H1158 v-10" fill="none" stroke="#006e96" stroke-width="2.5"></path>
+<text x="982" y="438" text-anchor="middle" style="font: 700 22px Assistant, sans-serif" fill="#006e96">Betriebsunterbrechung</text>
+</g>
+
+
+<g id="praxisBld">
+<rect x="432" y="474" width="416" height="172" fill="#f4f1ec" stroke="#cfc8bf" stroke-width="1.5"></rect>
+<rect x="418" y="464" width="444" height="12" fill="#3d3832"></rect>
+<rect x="432" y="476" width="416" height="4" fill="#b4c800"></rect>
+<rect x="452" y="494" width="376" height="52" fill="#cfe2ea" stroke="#827869" stroke-width="1.2"></rect>
+<g stroke="#827869" stroke-width="1.2">
+<line x1="499" y1="494" x2="499" y2="546"></line>
+<line x1="546" y1="494" x2="546" y2="546"></line>
+<line x1="593" y1="494" x2="593" y2="546"></line>
+<line x1="640" y1="494" x2="640" y2="546"></line>
+<line x1="687" y1="494" x2="687" y2="546"></line>
+<line x1="734" y1="494" x2="734" y2="546"></line>
+<line x1="781" y1="494" x2="781" y2="546"></line>
+</g>
+<rect x="432" y="556" width="416" height="2" fill="#cfc8bf"></rect>
+<rect x="452" y="576" width="130" height="58" fill="#cfe2ea" stroke="#827869" stroke-width="1.2"></rect>
+<line x1="517" y1="576" x2="517" y2="634" stroke="#827869" stroke-width="1.2"></line>
+<rect x="698" y="576" width="130" height="58" fill="#cfe2ea" stroke="#827869" stroke-width="1.2"></rect>
+<line x1="763" y1="576" x2="763" y2="634" stroke="#827869" stroke-width="1.2"></line>
+<rect x="596" y="566" width="88" height="6" fill="#3d3832"></rect>
+<rect x="606" y="574" width="68" height="72" fill="#9cc3d3" stroke="#4a443d" stroke-width="1.5"></rect>
+<line x1="640" y1="574" x2="640" y2="646" stroke="#4a443d" stroke-width="1.5"></line>
+<rect x="560" y="548" width="160" height="16" fill="#006e96"></rect>
+<path id="cross" d="M573 551.5h4v3h3v4h-3v3h-4v-3h-3v-4h3z" fill="#ffffff"></path>
+<text x="648" y="560" text-anchor="middle" style="font: 700 10px Assistant, sans-serif; letter-spacing: 0.16em" fill="#ffffff">ARZTPRAXIS</text>
+</g>
+
+<!-- Männchen hält den Schirmgriff -->
+<g id="homeBld" style="display:none" fill="#006e96" stroke="#006e96" stroke-linecap="round">
+<line x1="642" y1="540" x2="629" y2="466" stroke-width="16"></line>
+<line x1="700" y1="540" x2="716" y2="598" stroke-width="16"></line>
+<circle cx="668" cy="494" r="24" stroke="none"></circle>
+<rect x="630" y="526" width="76" height="66" rx="20" stroke="none"></rect>
+<rect x="638" y="572" width="26" height="74" rx="10" stroke="none"></rect>
+<rect x="672" y="572" width="26" height="74" rx="10" stroke="none"></rect>
+</g>
+</svg>
+<div id="rain" aria-hidden="true" style="position:absolute;left:0;top:0;width:1280px;height:680px;pointer-events:none"></div>
+<div id="badge" style="position:absolute;left:920px;top:560px;align-items:center;gap:8px;padding:8px 14px;border-radius:999px;background:#697d0f;color:#fff;font-size:15px;font-weight:700">
+<svg aria-hidden="true" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5l3.2 3L13 4.5"/></svg>Voller Versicherungsumfang*
+</div>
+</div>
+</div>
+
+<section aria-label="Versicherungsbausteine" style="padding:0 56px">
+<div class="grid4" id="core"></div>
+<div class="grid4" id="extra" style="margin-top:24px;padding-top:20px;border-top:1.5px solid #eeeae4">
+<div style="display:flex;flex-direction:column;justify-content:center;gap:2px">
+<span style="font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#006e96">Optionale Zusätze</span>
+<span id="extraNote" style="font-size:15px;line-height:1.3;color:#5d554c"></span>
+</div>
+</div>
+</section>
+
+<footer style="padding:16px 56px;display:flex;justify-content:space-between;gap:24px;font-size:13px;color:#5d554c">
+<span id="foot"></span>
+<span>Sebastian Klinder · Finanz- &amp; Niederlassungsberatung · HORBACH</span>
+</footer>
+</div>
+
+<dialog id="dlg" aria-labelledby="dlgTitle">
+<div class="dlg-h">
+<h2 id="dlgTitle"></h2>
+<p>Die wichtigsten Daten für das Angebot. Alles bleibt nur in diesem Browserfenster und wird nicht gespeichert oder versendet.</p>
+</div>
+<form id="capForm" class="dlg-b" onsubmit="return false"></form>
+<div class="dlg-f">
+<button type="button" class="btn ghost" id="dlgClose">Schließen</button>
+<button type="button" class="btn primary" id="dlgPrint">Datenblatt drucken / als PDF</button>
+</div>
+</dialog>
+<div id="sheet"></div>
+
+<script>
+(function () {
+
+  var PRAXIS_ITEMS = [
+    ['Berufshaftpflicht', 'Behandlungsfehler, Personenschäden'],
+    ['Praxisinhalt & Glas', 'Feuer, Einbruch, Leitungswasser, Sturm, Glasbruch'],
+    ['Elektronik & Medizintechnik', 'Defekt, Bedienfehler, Überspannung'],
+    ['Cyberversicherung', 'Hackerangriff, Datenverlust, DSGVO'],
+    ['Praxis-Rechtsschutz', 'Arbeits-, Vertrags-, Straf-Rechtsschutz'],
+    // Betriebsunterbrechung dreigeteilt: je ein Teil über Inhalt/Elektronik, Cyber, Praxisausfall
+    ['Sachschaden', 'Umsatzausfall nach Schaden an Inhalt & Elektronik', 'Betriebsunterbrechung 1/3'],
+    ['Cyber', 'Umsatzausfall nach Hackerangriff', 'Betriebsunterbrechung 2/3'],
+    ['Praxisausfall', 'Fixkosten bei Krankheit des Inhabers', 'Betriebsunterbrechung 3/3']
+  ];
+  var MODES = {
+    praxis: {
+      items: PRAXIS_ITEMS,
+      addons: [['Gebäude', 'Nur bei eigenem Praxisobjekt'], ['bAV', 'Betriebliche Altersversorgung'], ['bKV', 'Betriebliche Krankenversicherung']],
+      eyebrow: 'HORBACH · Betriebliche Absicherung der Arztpraxis',
+      title: 'Der Versicherungsschirm Ihrer Praxis',
+      lead: 'Jede Absicherung schließt ein Stück des Schirms. Wo eine Lücke bleibt, regnet das Risiko direkt auf Ihre Praxis.',
+      aria: 'Arztpraxis unter einem Regenschirm; ungeschützte Segmente sind eingerissen',
+      extraNote: 'Gebäude bei Eigentum, Benefits fürs Team – nicht Teil des Schirms',
+      foot: '* Bezieht sich auf die 8 Bausteine des Schirms. Gebäude, bAV und bKV sind optionale Zusätze.'
+    },
+    privat: {
+      items: [
+        ['Privathaftpflicht', 'Schäden an Dritten im Alltag'],
+        ['Hausrat & Glas', 'Feuer, Einbruch, Leitungswasser, Sturm, Glasbruch'],
+        ['Berufsunfähigkeit', 'Einkommen, wenn Sie nicht mehr praktizieren können'],
+        ['Krankenversicherung', 'PKV und Krankentagegeld'],
+        ['Risikoleben', 'Absicherung von Familie und Finanzierung'],
+        ['Unfallversicherung', 'Kapital bei Invalidität nach Unfall'],
+        ['Privat-Rechtsschutz', 'Privat-, Verkehrs-, Wohnungs-Rechtsschutz'],
+        ['Pflegezusatz', 'Lücke der Pflegepflichtversicherung']
+      ],
+      addons: [['Wohngebäude', 'Nur bei eigener Immobilie'], ['Kfz', 'Haftpflicht und Kasko'], ['Altersvorsorge', 'Ergänzung zum Versorgungswerk']],
+      eyebrow: 'HORBACH · Private Absicherung',
+      title: 'Ihr privater Versicherungsschirm',
+      lead: 'Jede Absicherung schließt ein Stück des Schirms. Wo eine Lücke bleibt, regnet das Risiko direkt auf Sie und Ihre Familie.',
+      aria: 'Person unter einem Regenschirm; ungeschützte Segmente sind eingerissen',
+      extraNote: 'Je nach Lebenssituation – nicht Teil des Schirms',
+      foot: '* Bezieht sich auf die 8 Bausteine des Schirms. Wohngebäude, Kfz und Altersvorsorge sind optionale Zusätze.'
+    }
+  };
+  var mode = 'praxis', M = MODES[mode];
+  var N = PRAXIS_ITEMS.length; // beide Modi haben 8 Bausteine = 8 Schirmsegmente
+  // [Segment, x, Stopp auf Schirm, Stopp ohne Schirm (Dach/Boden), Verzögerung ms, Dauer ms]; Segment -1 = außerhalb
+  var DROPS = [[0,126,318,646,1609,1132],[0,143,283,646,1359,967],[0,157,263,646,744,1236],[0,171,249,646,575,1198],[0,182,239,646,1414,1100],[0,201,223,646,696,1282],[1,210,217,646,1744,955],[1,227,206,646,1584,1078],[1,241,198,646,560,1187],[1,256,191,646,1024,1281],[1,274,182,646,730,1128],[1,286,177,646,707,1159],[1,302,171,646,1726,1038],[1,322,164,646,1409,1180],[2,337,158,646,684,1215],[2,346,156,646,340,1051],[2,366,150,646,1748,1194],[2,377,147,646,161,1293],[2,395,142,646,351,1265],[2,411,139,646,1189,1214],[2,425,136,462,861,1104],[2,439,133,462,1586,1276],[2,451,131,462,56,1050],[2,465,129,462,903,1269],[3,484,126,462,448,1042],[3,499,124,462,85,1191],[3,517,122,462,339,977],[3,531,121,462,226,1112],[3,547,120,462,988,1049],[3,558,119,462,850,1188],[3,572,118,462,1356,1263],[3,584,117,462,418,1071],[3,604,117,462,765,950],[3,616,116,462,570,1159],[3,635,116,462,1410,1230],[4,646,116,462,73,1231],[4,663,116,462,194,1101],[4,678,117,462,695,1247],[4,691,117,462,720,1016],[4,707,118,462,1665,1238],[4,723,119,462,756,1189],[4,734,120,462,1220,1145],[4,753,121,462,407,1018],[4,768,123,462,719,1288],[4,778,124,462,221,1116],[4,798,126,462,1259,1226],[5,809,128,462,1289,1238],[5,826,131,462,884,1065],[5,842,134,462,982,1144],[5,856,136,462,1750,1031],[5,872,140,646,532,1104],[5,887,143,646,850,960],[5,900,146,646,629,1201],[5,920,152,646,293,1194],[5,928,154,646,1351,1268],[5,950,161,646,502,1100],[6,958,163,646,279,1150],[6,973,169,646,1090,1236],[6,990,176,646,971,968],[6,1005,182,646,548,1029],[6,1024,191,646,585,1100],[6,1037,198,646,972,1215],[6,1054,207,646,1236,1010],[6,1064,213,646,258,1103],[7,1081,225,646,1450,1122],[7,1097,238,646,1497,1221],[7,1107,247,646,716,1134],[7,1126,267,646,1664,1252],[7,1136,281,646,5,1079],[7,1153,316,646,1404,1005],[-1,20,646,646,1818,1279],[-1,48,646,646,391,1007],[-1,78,646,646,879,1218],[-1,100,646,646,1218,1294],[-1,1180,646,646,1411,1246],[-1,1205,646,646,1758,1197],[-1,1232,646,646,974,1200],[-1,1262,646,646,1397,1100]];
+
+  // Stand je Ansicht merken, damit der Wechsel nichts verliert
+  var state = {
+    praxis: { covered: new Array(N).fill(false), addons: [false, false, false], form: {} },
+    privat: { covered: new Array(N).fill(false), addons: [false, false, false], form: {} }
+  };
+
+  // Datenaufnahme: [Gruppe, [[Feld, Typ, Auswahl?], ...]]
+  var JN = ['Nein', 'Ja'];
+  var FORM = {
+    praxis: [
+      ['Praxis', [['Praxisname', 'text'], ['Inhaber/in', 'text'], ['Fachrichtung', 'text'],
+        ['Rechtsform', 'select', ['Einzelpraxis', 'BAG / Gemeinschaftspraxis', 'Praxisgemeinschaft', 'MVZ']],
+        ['PLZ / Ort', 'text'], ['Niedergelassen seit', 'month']]],
+      ['Kennzahlen (Cyber & Inhalt)', [['Jahresumsatz (€)', 'number'], ['Anzahl Mitarbeiter', 'number'], ['Anzahl Gesellschafter', 'number']]],
+      ['Werte Inhaltsversicherung', [['Einrichtung (€)', 'number'], ['Medizinische Geräte (€)', 'number'], ['Elektronik (€)', 'number'],
+        ['Waren und Vorräte (€)', 'number'], ['Kühlgut (€)', 'number']]],
+      // shortcut: Praxisausfall-Kosten fehlen noch, Felder folgen vom Nutzer
+      ['Sonstiges', [['Bestehende Verträge / Ablauf', 'textarea'], ['Bemerkungen', 'textarea']]]
+    ],
+    privat: [
+      ['Person', [['Name', 'text'], ['Geburtsdatum', 'date'],
+        ['Familienstand', 'select', ['ledig', 'verheiratet / Partnerschaft', 'geschieden', 'verwitwet']],
+        ['Kinder (Anzahl)', 'number'], ['PLZ / Ort', 'text'],
+        ['Berufsstatus', 'select', ['niedergelassen', 'angestellt', 'in Weiterbildung', 'Studium']]]],
+      ['Absicherung', [['Fachrichtung', 'text'], ['Bruttoeinkommen pro Jahr (€)', 'number'], ['Gewünschte BU-Rente pro Monat (€)', 'number'],
+        ['Krankenversicherung', 'select', ['GKV', 'PKV']], ['Raucher', 'select', JN], ['Wohnfläche (m²)', 'number'],
+        ['Wohneigentum', 'select', JN]]],
+      ['Sonstiges', [['Bestehende Verträge / Ablauf', 'textarea'], ['Bemerkungen', 'textarea']]]
+    ]
+  };
+  var covered = state[mode].covered, addons = state[mode].addons;
+
+  var $ = function (s) { return document.querySelector(s); };
+  var panels = [], tears = [], nums = [];
+  for (var i = 0; i < N; i++) {
+    panels.push(document.querySelector('[data-p="' + i + '"]'));
+    tears.push(document.querySelector('[data-t="' + i + '"]'));
+    nums.push(document.querySelector('[data-n="' + i + '"]'));
+    panels[i].classList.add('panel', i % 2 ? 'pb' : 'pa');
+    tears[i].classList.add('tear');
+    nums[i].classList.add('pnum');
+  }
+
+  var rain = $('#rain');
+  var drops = DROPS.map(function (d) {
+    var lane = document.createElement('div');
+    lane.className = 'lane';
+    lane.style.left = (d[1] - 1) + 'px';
+    var drop = document.createElement('div');
+    drop.className = 'drop';
+    drop.style.animationDuration = d[5] + 'ms';
+    drop.style.animationDelay = '-' + d[4] + 'ms';
+    lane.appendChild(drop);
+    rain.appendChild(lane);
+    return { d: d, lane: lane, drop: drop };
+  });
+
+  function chip(n, title, risk, extraCls, grp) {
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'chip' + (extraCls || '');
+    b.innerHTML = '<span class="num"></span><span><span class="t"></span><span class="r"></span></span><span class="pill"></span>';
+    b.querySelector('.num').textContent = n;
+    b.querySelector('.t').textContent = title;
+    b.querySelector('.r').textContent = risk;
+    if (grp) { var g = document.createElement('span'); g.className = 'grp'; g.textContent = grp; b.appendChild(g); }
+    return b;
+  }
+  var coreChips = [], addonChips = [];
+  function setMode(m) {
+    mode = m; M = MODES[m]; covered = state[m].covered; addons = state[m].addons;
+    coreChips.concat(addonChips).forEach(function (b) { b.remove(); });
+    coreChips = M.items.map(function (it, idx) {
+      var b = chip(idx + 1, it[0], it[1], '', it[2]);
+      b.addEventListener('click', function () { covered[idx] = !covered[idx]; render(); });
+      $('#core').appendChild(b);
+      return b;
+    });
+    addonChips = M.addons.map(function (it, idx) {
+      var b = chip('+', it[0], it[1], ' addon');
+      b.addEventListener('click', function () { addons[idx] = !addons[idx]; render(); });
+      $('#extra').appendChild(b);
+      return b;
+    });
+    ['eyebrow', 'title', 'lead', 'extraNote', 'foot'].forEach(function (k) { $('#' + k).textContent = M[k]; });
+    $('#praxisBld').style.display = $('#bu').style.display = m === 'praxis' ? '' : 'none';
+    $('#homeBld').style.display = m === 'privat' ? '' : 'none';
+    $('#scene').setAttribute('aria-label', M.aria);
+    document.querySelectorAll('.seg button').forEach(function (b) { b.setAttribute('aria-pressed', b.dataset.mode === m); });
+    render();
+  }
+  document.querySelectorAll('.seg button').forEach(function (b) {
+    b.addEventListener('click', function () { setMode(b.dataset.mode); });
+  });
+
+  function render() {
+    for (var i = 0; i < N; i++) {
+      panels[i].classList.toggle('on', covered[i]);
+      tears[i].classList.toggle('off', covered[i]);
+      nums[i].classList.toggle('on', covered[i]);
+      coreChips[i].classList.toggle('on', covered[i]);
+      coreChips[i].setAttribute('aria-pressed', covered[i]);
+      coreChips[i].querySelector('.pill').textContent = covered[i] ? 'Abgesichert' : 'Lücke';
+    }
+    addonChips.forEach(function (b, i) {
+      b.classList.toggle('on', addons[i]);
+      b.setAttribute('aria-pressed', addons[i]);
+      b.querySelector('.pill').textContent = addons[i] ? 'Ergänzt' : 'Optional';
+    });
+    drops.forEach(function (o) {
+      var d = o.d, open = d[0] < 0 || !covered[d[0]];
+      // Privat: Tropfen treffen Kopf (±24) oder Schultern (±38) des Männchens, sonst den Boden
+      var dx = Math.abs(d[1] - 668);
+      var floor = mode === 'privat' && d[3] === 462 ? (dx < 24 ? 472 : dx < 38 ? 526 : 646) : d[3];
+      o.lane.style.height = (open ? floor : d[2]) + 'px';
+      o.drop.classList.toggle('leak', d[0] >= 0 && open);
+    });
+    $('#badge').style.display = covered.every(Boolean) ? 'flex' : 'none';
+  }
+
+
+  // Auf Fenster skalieren, damit Schirm und Kacheln gleichzeitig sichtbar sind
+  function fit() {
+    var st = $('#stage'), s = Math.min(1, window.innerWidth / 1280, window.innerHeight / st.offsetHeight);
+    st.style.transform = s < 1 ? 'scale(' + s + ')' : '';
+    st.style.marginLeft = s < 1 ? Math.max(0, (window.innerWidth - 1280 * s) / 2) + 'px' : 'auto';
+    document.body.style.height = s < 1 ? (st.offsetHeight * s) + 'px' : '';
+  }
+  function el(tag, text, cls) {
+    var e = document.createElement(tag);
+    if (text != null) e.textContent = text;
+    if (cls) e.className = cls;
+    return e;
+  }
+  var dlg = $('#dlg'), capForm = $('#capForm');
+  function openCapture() {
+    var vals = state[mode].form;
+    capForm.innerHTML = '';
+    $('#dlgTitle').textContent = 'Daten für Angebot – ' + (mode === 'praxis' ? 'Praxis' : 'Privat');
+    FORM[mode].forEach(function (g) {
+      var fs = el('fieldset'), grid = el('div', null, 'fgrid');
+      fs.appendChild(el('legend', g[0]));
+      g[1].forEach(function (f) {
+        var l = el('label', f[0], f[1] === 'textarea' ? 'wide' : ''), input;
+        if (f[1] === 'select') {
+          input = el('select');
+          input.appendChild(el('option', 'Bitte wählen')).value = '';
+          f[2].forEach(function (o) { input.appendChild(el('option', o)); });
+        } else if (f[1] === 'textarea') {
+          input = el('textarea'); input.rows = 3;
+        } else {
+          input = el('input'); input.type = f[1];
+          if (f[1] === 'number') { input.min = 0; input.inputMode = 'numeric'; }
+        }
+        input.name = f[0];
+        input.value = vals[f[0]] || '';
+        l.appendChild(input);
+        grid.appendChild(l);
+      });
+      fs.appendChild(grid);
+      capForm.appendChild(fs);
+    });
+    dlg.showModal();
+  }
+  capForm.addEventListener('input', function (e) { state[mode].form[e.target.name] = e.target.value; });
+  $('#capture').addEventListener('click', openCapture);
+  $('#dlgClose').addEventListener('click', function () { dlg.close(); });
+
+  function row(t, k, v) { var tr = el('tr'); tr.appendChild(el('td', k)); tr.appendChild(el('td', v)); t.appendChild(tr); }
+  function buildSheet() {
+    var s = $('#sheet'), vals = state[mode].form, t;
+    s.innerHTML = '';
+    s.appendChild(el('h1', 'Datenaufnahme Versicherungsangebot – ' + (mode === 'praxis' ? 'Praxis' : 'Privat')));
+    s.appendChild(el('div', 'Stand ' + new Date().toLocaleDateString('de-DE') + ' · Sebastian Klinder · Finanz- & Niederlassungsberatung · HORBACH'));
+    FORM[mode].forEach(function (g) {
+      s.appendChild(el('h2', g[0]));
+      t = s.appendChild(el('table'));
+      g[1].forEach(function (f) { row(t, f[0], vals[f[0]] || '–'); });
+    });
+    s.appendChild(el('h2', 'Versicherungsschirm'));
+    t = s.appendChild(el('table'));
+    var names = function (on) { return M.items.filter(function (_, i) { return covered[i] === on; }).map(function (it) { return it[2] ? 'BU ' + it[0] : it[0]; }).join(', ') || '–'; };
+    row(t, 'Bereits abgesichert', names(true));
+    row(t, 'Lücken – anzubieten', names(false));
+    row(t, 'Optionale Zusätze gewünscht', M.addons.filter(function (_, i) { return addons[i]; }).map(function (a) { return a[0]; }).join(', ') || '–');
+  }
+  $('#dlgPrint').addEventListener('click', function () { buildSheet(); window.print(); });
+
+  setMode('praxis');
+  window.addEventListener('resize', fit); fit();
+})();
+</script>
+</body>
+</html>
