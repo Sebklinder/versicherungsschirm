@@ -18,7 +18,7 @@ body{margin:0;background:#f4f1ec;font-family:Assistant,sans-serif;color:#2b2723}
 .stage{width:1280px;margin:0 auto;position:relative;overflow:hidden;background:#fff;transform-origin:top left}
 [data-p]{fill:#d9d3cb} /* Grundfarbe vor JS, sonst blitzt der Schirm beim Laden schwarz */
 .panel{fill:#d9d3cb;stroke:#fff;stroke-width:1.4;transition:fill .8s ease}
-.panel.on.pa{fill:#697d0f}.panel.on.pb{fill:#b4c800}
+.panel.on.pa{fill:#697d0f}.panel.on.pb{fill:#b4c800}.panel.chk{fill:#ecbd00}
 .tear{opacity:1;transition:opacity .6s ease}.tear.off{opacity:0}
 .pnum{font:700 22px Assistant,sans-serif;fill:#6b6259;transition:fill .6s ease}.pnum.on{fill:#fff}
 .lane{position:absolute;top:0;width:2px;pointer-events:none}
@@ -35,6 +35,7 @@ body{margin:0;background:#f4f1ec;font-family:Assistant,sans-serif;color:#2b2723}
 .chip .r{display:block;font-size:14px;line-height:1.3;color:#5d554c;margin-top:2px}
 .chip .pill{position:absolute;top:10px;right:12px;white-space:nowrap;font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:4px 8px;border-radius:999px;color:#af005f;background:#f8e7ef}
 .chip.on .pill{color:#fff;background:#697d0f}
+.chip.chk{border-color:#ecbd00;background:#fdf6d8}.chip.chk .num,.chip.chk .pill{background:#ecbd00;color:#2b2723}
 .chip .grp{position:absolute;top:11px;left:14px;font-size:12px;font-weight:700;color:#006e96}
 .chip.addon{border-style:dashed}.chip.addon .pill{color:#5d554c;background:#eeeae4}
 .chip.addon.on{border-style:solid;border-color:#006e96;background:#e9f2f6}
@@ -94,11 +95,24 @@ legend{float:left;width:100%;padding:0;margin-bottom:12px;font-size:13px;font-we
   #sheet table{width:100%;border-collapse:collapse}#sheet td{padding:5px 8px;border-bottom:1px solid #e3ded7;vertical-align:top}
   #sheet td:first-child{width:38%;color:#5d554c}
   #sheet tr.sub td{padding-top:12px;font-weight:700;color:#2b2723}
+  #sheet{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  #sheet .eyebrow{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#697d0f;margin-bottom:4px}
+  #sheet svg{display:block;width:100%;height:auto;margin:10px 0 4px}
+  #sheet .res td:first-child{width:auto}
+  #sheet .res td:nth-child(1){width:34%}#sheet .res td:nth-child(2){width:16%}
+  #sheet .res small{display:block;color:#5d554c}
+  #sheet .st{display:inline-block;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:700;white-space:nowrap}
+  #sheet .st0{background:#af005f;color:#fff}#sheet .st1{background:#697d0f;color:#fff}#sheet .st2{background:#ecbd00;color:#2b2723}#sheet .st3{background:#006e96;color:#fff}
+  #sheet ul{margin:0;padding-left:18px}#sheet li{margin:3px 0}
+  #sheet .sign{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:44px;break-inside:avoid}
+  #sheet .sign div{border-top:1px solid #2b2723;padding-top:4px;font-size:11px;color:#5d554c}
+  #sheet .disc{margin-top:18px;font-size:10px;color:#5d554c}
 }
 .fade{transition:opacity .9s ease,transform .9s ease}
 #rain{transition:opacity .9s ease}
 .rays{transform-box:fill-box;transform-origin:center;animation:spin 40s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
+.pnum.chk{fill:#2b2723}
 @media (prefers-reduced-motion:reduce){.drop{animation:none;opacity:0}.rays{animation:none}.panel,.tear,.pnum,.chip,.chip .num,.fade,#rain{transition:none}}
 </style>
 </head>
@@ -123,7 +137,10 @@ legend{float:left;width:100%;padding:0;margin-bottom:12px;font-size:13px;font-we
 <button type="button" data-mode="praxis">Praxis</button>
 <button type="button" data-mode="privat">+ Privater Rahmen</button>
 </div>
-<button type="button" class="btn ghost" id="capture" style="justify-content:center">Daten für Angebot aufnehmen</button>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+<button type="button" class="btn ghost" id="capture" style="justify-content:center">Daten aufnehmen</button>
+<button type="button" class="btn primary" id="result" style="justify-content:center">Ergebnis als PDF</button>
+</div>
 </div>
 </header>
 
@@ -304,9 +321,10 @@ legend{float:left;width:100%;padding:0;margin-bottom:12px;font-size:13px;font-we
 </div>
 </section>
 
-<footer style="padding:16px 56px;display:flex;justify-content:space-between;gap:24px;font-size:14px;color:#5d554c">
-<span id="foot"></span>
-<span>Sebastian Klinder · Finanz- &amp; Niederlassungsberatung · HORBACH</span>
+<footer style="padding:16px 56px;display:flex;justify-content:space-between;align-items:center;gap:24px;font-size:14px;color:#5d554c">
+<span><span id="foot"></span><br><span id="disc"></span></span>
+<span style="display:flex;align-items:center;gap:16px;flex:none">Sebastian Klinder · Finanz- &amp; Niederlassungsberatung · HORBACH
+<button type="button" class="btn ghost" id="reset">Neues Gespräch</button></span>
 </footer>
 </div>
 
@@ -350,7 +368,8 @@ legend{float:left;width:100%;padding:0;margin-bottom:12px;font-size:13px;font-we
       title: 'Der Versicherungsschirm Ihrer Praxis',
       lead: 'Jede Absicherung schließt ein Stück des Schirms. Wo eine Lücke bleibt, regnet das Risiko direkt auf Ihre Praxis.',
       aria: 'Arztpraxis unter einem Regenschirm; ungeschützte Segmente sind eingerissen',
-      foot: '* Bezieht sich auf die 8 Bausteine des Schirms. Gebäude, bAV und bKV sind optionale Zusätze.'
+      foot: '* Bezieht sich auf die 8 Bausteine des Schirms. Gebäude, bAV und bKV sind optionale Zusätze.',
+      nameKey: 'Praxisname', titleFor: 'Der Versicherungsschirm für '
     },
     privat: {
       items: [
@@ -368,9 +387,13 @@ legend{float:left;width:100%;padding:0;margin-bottom:12px;font-size:13px;font-we
       title: 'Ihr privater Versicherungsschirm',
       lead: 'Jede Absicherung schließt ein Stück des Schirms. Wo eine Lücke bleibt, regnet das Risiko direkt auf Sie und Ihre Familie.',
       aria: 'Person unter einem Regenschirm; ungeschützte Segmente sind eingerissen',
-      foot: '* Bezieht sich auf die 6 Bausteine des privaten Schirms.'
+      foot: '* Bezieht sich auf die 6 Bausteine des privaten Schirms.',
+      nameKey: 'Name', titleFor: 'Der private Versicherungsschirm für '
     }
   };
+  var DISC = 'Unverbindliche Übersicht zur Veranschaulichung. Maßgeblich sind allein Antrag, Versicherungsschein und Versicherungsbedingungen.';
+  // Status je Baustein: 0 Lücke, 1 abgesichert, 2 vorhanden, aber prüfen
+  var STATUS = ['Lücke', 'Abgesichert', 'Prüfen'];
   // Info-Texte je Baustein (Schlüssel = Kacheltitel): [Warum wichtig, Kernleistung]
   var INFO = {
     'Berufshaftpflicht': ['Ein einziger Behandlungsfehler kann Schadenersatz- und Schmerzensgeldforderungen in Millionenhöhe auslösen, etwa bei bleibenden Gesundheitsschäden. Für Vertragsärzte ist eine ausreichende Berufshaftpflicht zudem gesetzlich vorgeschrieben (§ 95e SGB V, mindestens 3 Mio. € je Versicherungsfall).',
@@ -415,10 +438,13 @@ legend{float:left;width:100%;padding:0;margin-bottom:12px;font-size:13px;font-we
   var DROPS = [[0,126,318,646,1609,1132],[0,143,283,646,1359,967],[0,157,263,646,744,1236],[0,171,249,646,575,1198],[0,182,239,646,1414,1100],[0,201,223,646,696,1282],[1,210,217,646,1744,955],[1,227,206,646,1584,1078],[1,241,198,646,560,1187],[1,256,191,646,1024,1281],[1,274,182,646,730,1128],[1,286,177,646,707,1159],[1,302,171,646,1726,1038],[1,322,164,646,1409,1180],[2,337,158,646,684,1215],[2,346,156,646,340,1051],[2,366,150,646,1748,1194],[2,377,147,646,161,1293],[2,395,142,646,351,1265],[2,411,139,646,1189,1214],[2,425,136,462,861,1104],[2,439,133,462,1586,1276],[2,451,131,462,56,1050],[2,465,129,462,903,1269],[3,484,126,462,448,1042],[3,499,124,462,85,1191],[3,517,122,462,339,977],[3,531,121,462,226,1112],[3,547,120,462,988,1049],[3,558,119,462,850,1188],[3,572,118,462,1356,1263],[3,584,117,462,418,1071],[3,604,117,462,765,950],[3,616,116,462,570,1159],[3,635,116,462,1410,1230],[4,646,116,462,73,1231],[4,663,116,462,194,1101],[4,678,117,462,695,1247],[4,691,117,462,720,1016],[4,707,118,462,1665,1238],[4,723,119,462,756,1189],[4,734,120,462,1220,1145],[4,753,121,462,407,1018],[4,768,123,462,719,1288],[4,778,124,462,221,1116],[4,798,126,462,1259,1226],[5,809,128,462,1289,1238],[5,826,131,462,884,1065],[5,842,134,462,982,1144],[5,856,136,462,1750,1031],[5,872,140,646,532,1104],[5,887,143,646,850,960],[5,900,146,646,629,1201],[5,920,152,646,293,1194],[5,928,154,646,1351,1268],[5,950,161,646,502,1100],[6,958,163,646,279,1150],[6,973,169,646,1090,1236],[6,990,176,646,971,968],[6,1005,182,646,548,1029],[6,1024,191,646,585,1100],[6,1037,198,646,972,1215],[6,1054,207,646,1236,1010],[6,1064,213,646,258,1103],[7,1081,225,646,1450,1122],[7,1097,238,646,1497,1221],[7,1107,247,646,716,1134],[7,1126,267,646,1664,1252],[7,1136,281,646,5,1079],[7,1153,316,646,1404,1005],[-1,20,646,646,1818,1279],[-1,48,646,646,391,1007],[-1,78,646,646,879,1218],[-1,100,646,646,1218,1294],[-1,1180,646,646,1411,1246],[-1,1205,646,646,1758,1197],[-1,1232,646,646,974,1200],[-1,1262,646,646,1397,1100]];
 
   // Stand je Ansicht merken, damit der Wechsel nichts verliert
-  var state = {
-    praxis: { covered: new Array(N).fill(false), addons: [false, false, false], form: {} },
-    privat: { covered: new Array(MODES.privat.items.length).fill(false), addons: [], form: {} }
-  };
+  function freshState() {
+    return {
+      praxis: { covered: new Array(N).fill(0), addons: [false, false, false], form: {} },
+      privat: { covered: new Array(MODES.privat.items.length).fill(0), addons: [], form: {} }
+    };
+  }
+  var state = freshState();
 
   // Datenaufnahme: [Gruppe, [[Feld, Typ, Auswahl?], ...]]
   var JN = ['Nein', 'Ja'];
@@ -530,7 +556,7 @@ legend{float:left;width:100%;padding:0;margin-bottom:12px;font-size:13px;font-we
     coreChips.concat(addonChips).forEach(function (b) { b.parentNode.remove(); });
     coreChips = M.items.map(function (it, idx) {
       var b = chip(idx + 1, it[0], it[1], '', it[2]);
-      b.addEventListener('click', function () { covered[idx] = !covered[idx]; render(); });
+      b.addEventListener('click', function () { covered[idx] = (covered[idx] + 1) % 3; render(); });
       $('#core').appendChild(cell(b, it));
       return b;
     });
@@ -540,7 +566,7 @@ legend{float:left;width:100%;padding:0;margin-bottom:12px;font-size:13px;font-we
       $('#extra').appendChild(cell(b, it));
       return b;
     });
-    ['eyebrow', 'title', 'lead', 'foot'].forEach(function (k) { $('#' + k).textContent = M[k]; });
+    ['eyebrow', 'lead', 'foot'].forEach(function (k) { $('#' + k).textContent = M[k]; });
     $('#extra').hidden = !M.addons.length;
     for (var p = 0; p < N; p++) {
       var hid = M.hide.indexOf(p) > -1;
@@ -559,17 +585,23 @@ legend{float:left;width:100%;padding:0;margin-bottom:12px;font-size:13px;font-we
     b.addEventListener('click', function () { setMode(b.dataset.mode); });
   });
 
+  function custName() { return (state[mode].form[M.nameKey] || '').trim(); }
+  function setTitle() { var n = custName(); $('#title').textContent = n ? M.titleFor + n : M.title; }
   function render() {
+    setTitle();
     for (var p = 0; p < N; p++) {
-      var on = covered[M.seg[p]];
-      panels[p].classList.toggle('on', on);
-      tears[p].classList.toggle('off', on);
-      nums[p].classList.toggle('on', on);
+      var s = covered[M.seg[p]];
+      panels[p].classList.toggle('on', s === 1);
+      panels[p].classList.toggle('chk', s === 2);
+      tears[p].classList.toggle('off', s > 0); // "prüfen" schließt den Schirm, aber in Gelb
+      nums[p].classList.toggle('on', s === 1);
+      nums[p].classList.toggle('chk', s === 2);
     }
     for (var i = 0; i < coreChips.length; i++) {
-      coreChips[i].classList.toggle('on', covered[i]);
-      coreChips[i].setAttribute('aria-pressed', covered[i]);
-      coreChips[i].querySelector('.pill').textContent = covered[i] ? 'Abgesichert' : 'Lücke';
+      coreChips[i].classList.toggle('on', covered[i] === 1);
+      coreChips[i].classList.toggle('chk', covered[i] === 2);
+      coreChips[i].setAttribute('aria-pressed', ['false', 'true', 'mixed'][covered[i]]);
+      coreChips[i].querySelector('.pill').textContent = STATUS[covered[i]];
     }
     addonChips.forEach(function (b, i) {
       b.classList.toggle('on', addons[i]);
@@ -584,9 +616,9 @@ legend{float:left;width:100%;padding:0;margin-bottom:12px;font-size:13px;font-we
       o.lane.style.height = (open ? floor : d[2]) + 'px';
       o.drop.classList.toggle('leak', d[0] >= 0 && open);
     });
-    $('#badge').style.display = covered.every(Boolean) ? 'flex' : 'none';
-    // Je mehr abgesichert, desto mehr Sonne: Wolke zieht ab, Regen lässt nach, bei 100 % ist er weg
-    var pct = covered.filter(Boolean).length / covered.length;
+    $('#badge').style.display = covered.every(function (s) { return s === 1; }) ? 'flex' : 'none';
+    // Je mehr abgesichert, desto mehr Sonne: Wolke zieht ab, Regen lässt nach, bei 100 % ist er weg; "prüfen" zählt halb
+    var pct = covered.reduce(function (a, s) { return a + [0, 1, .5][s]; }, 0) / covered.length;
     $('#sun').style.opacity = .25 + .75 * pct;
     $('#cloud').style.opacity = 1 - pct;
     $('#cloud').style.transform = 'translateX(' + (-140 * pct) + 'px)';
@@ -675,6 +707,7 @@ legend{float:left;width:100%;padding:0;margin-bottom:12px;font-size:13px;font-we
     if (t.type === 'checkbox') { vals[t.name] = t.checked ? 'ja' : ''; $('#' + t.name).hidden = !t.checked; }
     else vals[t.name] = t.value;
     updateSums();
+    setTitle();
   }
   capForm.addEventListener('input', onInput);
   capForm.addEventListener('change', onInput); // ältere iPad-Safari melden Checkboxen nur per change
@@ -701,12 +734,69 @@ legend{float:left;width:100%;padding:0;margin-bottom:12px;font-size:13px;font-we
     });
     s.appendChild(el('h2', 'Versicherungsschirm'));
     t = s.appendChild(el('table'));
-    var names = function (on) { return M.items.filter(function (_, i) { return covered[i] === on; }).map(function (it) { return it[2] ? 'BU ' + it[0] : it[0]; }).join(', ') || '–'; };
-    row(t, 'Bereits abgesichert', names(true));
-    row(t, 'Lücken – anzubieten', names(false));
-    row(t, 'Optionale Zusätze gewünscht', M.addons.filter(function (_, i) { return addons[i]; }).map(function (a) { return a[0]; }).join(', ') || '–');
+    var names = function (s) { return M.items.filter(function (_, i) { return covered[i] === s; }).map(function (it) { return it[2] ? 'BU ' + it[0] : it[0]; }).join(', ') || '–'; };
+    row(t, 'Bereits abgesichert', names(1));
+    row(t, 'Vorhanden – prüfen', names(2));
+    row(t, 'Lücken – anzubieten', names(0));
+    row(t, 'Optionale Zusätze gewünscht', chosenAddons().map(function (a) { return a[0]; }).join(', ') || '–');
+  }
+  function chosenAddons() { return M.addons.filter(function (_, i) { return addons[i]; }); }
+  function fullName(it) { return it[2] ? 'Betriebsunterbrechung – ' + it[0] : it[0]; }
+  function pill(text, cls) { return el('span', text, 'st ' + cls); }
+
+  // Beratungsergebnis für den Kunden: Schirm, Status je Baustein, nächste Schritte, Unterschriften
+  function buildResult() {
+    var s = $('#sheet'), vals = state[mode].form, n = custName(), t, tr, td;
+    s.innerHTML = '';
+    s.appendChild(el('div', M.eyebrow, 'eyebrow'));
+    s.appendChild(el('h1', n ? M.titleFor + n : M.title));
+    s.appendChild(el('div', 'Beratungsergebnis vom ' + new Date().toLocaleDateString('de-DE') + ' · Sebastian Klinder · Finanz- & Niederlassungsberatung · HORBACH'));
+    var svg = $('#scene').cloneNode(true);
+    svg.removeAttribute('style'); svg.removeAttribute('height');
+    svg.setAttribute('width', '100%'); svg.setAttribute('viewBox', '100 70 1080 590');
+    s.appendChild(svg);
+
+    s.appendChild(el('h2', 'Ihre Absicherung im Überblick'));
+    t = s.appendChild(el('table', null, 'res'));
+    M.items.forEach(function (it, i) {
+      tr = t.appendChild(el('tr'));
+      td = tr.appendChild(el('td')); td.appendChild(el('strong', (i + 1) + '. ' + fullName(it))); td.appendChild(el('small', it[1]));
+      tr.appendChild(el('td')).appendChild(pill(STATUS[covered[i]], 'st' + covered[i]));
+      tr.appendChild(el('td', INFO[it[0]][1]));
+    });
+    chosenAddons().forEach(function (it) {
+      tr = t.appendChild(el('tr'));
+      td = tr.appendChild(el('td')); td.appendChild(el('strong', '+ ' + it[0])); td.appendChild(el('small', it[1]));
+      tr.appendChild(el('td')).appendChild(pill('Gewünscht', 'st3'));
+      tr.appendChild(el('td', INFO[it[0]][1]));
+    });
+
+    var steps = [];
+    M.items.forEach(function (it, i) {
+      if (covered[i] === 0) steps.push('Angebot erstellen: ' + fullName(it));
+      if (covered[i] === 2) steps.push('Bestehenden Vertrag prüfen (Umfang, Summen, Aktualität): ' + fullName(it));
+    });
+    chosenAddons().forEach(function (it) { steps.push('Angebot ergänzen: ' + it[0]); });
+    s.appendChild(el('h2', 'Nächste Schritte'));
+    var ul = s.appendChild(el('ul'));
+    (steps.length ? steps : ['Absicherung vollständig – jährliche Überprüfung vereinbaren']).forEach(function (x) { ul.appendChild(el('li', x)); });
+    if (vals['Bemerkungen']) { s.appendChild(el('h2', 'Bemerkungen')); s.appendChild(el('div', vals['Bemerkungen'])); }
+
+    var sign = s.appendChild(el('div', null, 'sign'));
+    ['Ort, Datum', n || (mode === 'praxis' ? 'Praxisinhaber/in' : 'Kunde/Kundin'), 'Sebastian Klinder, HORBACH'].forEach(function (x) { sign.appendChild(el('div', x)); });
+    s.appendChild(el('p', DISC, 'disc'));
   }
   $('#dlgPrint').addEventListener('click', function () { buildSheet(); window.print(); });
+  $('#result').addEventListener('click', function () { buildResult(); window.print(); });
+  $('#reset').addEventListener('click', function () {
+    if (!confirm('Neues Gespräch beginnen? Alle Markierungen und Eingaben werden gelöscht.')) return;
+    state = freshState();
+    setMode('praxis');
+  });
+  $('#disc').textContent = DISC;
+
+  // Offline-Nutzung auf dem iPad (nur über https, nicht in der lokalen Vorschau)
+  if ('serviceWorker' in navigator && location.protocol === 'https:') navigator.serviceWorker.register('sw.js').catch(function () {});
 
   setMode('praxis');
   window.addEventListener('resize', fit); fit();
