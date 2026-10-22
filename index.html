@@ -44,6 +44,7 @@ body{margin:0;background:#f4f1ec;font-family:Assistant,sans-serif;color:#2b2723}
 .cell{position:relative;display:flex}.cell>.chip{flex:1;padding-right:48px}
 .info{position:absolute;right:10px;bottom:10px;width:32px;height:32px;border-radius:50%;border:1.5px solid #cfc8bf;background:#fff;color:#5d554c;font:italic 700 16px Georgia,serif;cursor:pointer}
 .info:hover{border-color:#827869;color:#2b2723}.info:focus-visible{outline:3px solid #006e96;outline-offset:2px}
+.info.seen{background:#697d0f;border-color:#697d0f;color:#fff} /* bereits erläutert; CD: weiße Schrift auf Basil */
 #infoDlg{width:min(560px,94vw)}#infoDlg .dlg-b{background:#fff;border-top:0}#infoDlg h3{margin:0 0 4px;font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#697d0f}
 #infoDlg p{margin:0 0 16px;font-size:16px;line-height:1.5}
 .btn{white-space:nowrap;display:inline-flex;align-items:center;gap:8px;min-height:52px;padding:0 18px;border-radius:10px;font:700 15px Assistant,sans-serif;cursor:pointer}
@@ -449,8 +450,8 @@ legend{float:left;width:100%;padding:0;margin-bottom:12px;font-size:13px;font-we
   // Stand je Ansicht merken, damit der Wechsel nichts verliert
   function freshState() {
     return {
-      praxis: { covered: new Array(N).fill(0), addons: [false, false, false], form: {} },
-      privat: { covered: new Array(MODES.privat.items.length).fill(0), addons: [], form: {} }
+      praxis: { covered: new Array(N).fill(0), addons: [false, false, false], form: {}, info: {} },
+      privat: { covered: new Array(MODES.privat.items.length).fill(0), addons: [], form: {}, info: {} }
     };
   }
   var state = freshState();
@@ -549,7 +550,11 @@ legend{float:left;width:100%;padding:0;margin-bottom:12px;font-size:13px;font-we
     var c = el('div', null, 'cell'), i = el('button', 'i', 'info');
     i.type = 'button';
     i.setAttribute('aria-label', 'Info: ' + it[0]);
+    i.classList.toggle('seen', !!state[mode].info[it[0]]);
     i.addEventListener('click', function () {
+      // für die Beratungsdokumentation: was wann erläutert wurde (erster Aufruf zählt)
+      state[mode].info[it[0]] = state[mode].info[it[0]] || new Date().toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
+      i.classList.add('seen');
       $('#infoTitle').textContent = it[2] ? 'Betriebsunterbrechung – ' + it[0] : it[0];
       $('#infoRisk').textContent = it[1];
       $('#infoWhy').textContent = INFO[it[0]][0];
@@ -749,6 +754,12 @@ legend{float:left;width:100%;padding:0;margin-bottom:12px;font-size:13px;font-we
     row(t, 'Bestehende Verträge – überprüfen', names(2));
     row(t, 'Lücken – anzubieten', names(0));
     row(t, 'Optionale Zusätze gewünscht', chosenAddons().map(function (a) { return a[0]; }).join(', ') || '–');
+    row(t, 'Im Gespräch erläutert (Info)', explained().join(', ') || '–');
+  }
+  function explained() {
+    var seen = state[mode].info;
+    return M.items.concat(M.addons).filter(function (it) { return seen[it[0]]; })
+      .map(function (it) { return fullName(it) + ' (' + seen[it[0]] + ' Uhr)'; });
   }
   // Datenaufnahme plus je bestehendem Vertrag (abgesichert oder prüfen) Versicherer, Nummer, Ablauf – vor "Sonstiges"
   function formGroups() {
@@ -803,6 +814,11 @@ legend{float:left;width:100%;padding:0;margin-bottom:12px;font-size:13px;font-we
       if (covered[i] === 2) steps.push('Bestehenden Vertrag überprüfen (Umfang, Summen, Aktualität): ' + fullName(it));
     });
     chosenAddons().forEach(function (it) { steps.push('Angebot ergänzen: ' + it[0]); });
+    if (explained().length) {
+      s.appendChild(el('h2', 'Im Gespräch erläutert'));
+      var ex = s.appendChild(el('ul'));
+      explained().forEach(function (x) { ex.appendChild(el('li', x + ' – Bedeutung und Kernleistung')); });
+    }
     s.appendChild(el('h2', 'Nächste Schritte'));
     var ul = s.appendChild(el('ul'));
     (steps.length ? steps : ['Absicherung vollständig – jährliche Überprüfung vereinbaren']).forEach(function (x) { ul.appendChild(el('li', x)); });
