@@ -319,33 +319,34 @@ legend{float:left;width:100%;padding:0;margin-bottom:12px;font-size:13px;font-we
     },
     privat: {
       items: [
-        ['Privathaftpflicht', 'Schäden an Dritten im Alltag'],
-        ['Hausrat & Glas', 'Feuer, Einbruch, Leitungswasser, Sturm, Glasbruch'],
-        ['Berufsunfähigkeit', 'Einkommen, wenn Sie nicht mehr praktizieren können'],
-        ['Krankenversicherung', 'PKV und Krankentagegeld'],
         ['Risikoleben', 'Absicherung von Familie und Finanzierung'],
-        ['Unfallversicherung', 'Kapital bei Invalidität nach Unfall'],
-        ['Privat-Rechtsschutz', 'Privat-, Verkehrs-, Wohnungs-Rechtsschutz'],
-        ['Pflegezusatz', 'Lücke der Pflegepflichtversicherung']
+        ['Privathaftpflicht', 'Schäden an Dritten im Alltag'],
+        ['Berufsunfähigkeit', 'Einkommen, wenn Sie nicht mehr praktizieren können'],
+        ['Krankenversicherung', 'Private oder gesetzliche Krankenversicherung'],
+        ['Altersvorsorge', 'Ergänzung zum Versorgungswerk'],
+        ['Krankentagegeld', 'Einkommen bei längerer Krankheit']
       ],
-      addons: [['Wohngebäude', 'Nur bei eigener Immobilie'], ['Kfz', 'Haftpflicht und Kasko'], ['Altersvorsorge', 'Ergänzung zum Versorgungswerk']],
+      // 6 Bausteine auf 8 Schirmsegmente: die schmalen Außensegmente werden paarweise zusammengelegt
+      seg: [0, 0, 1, 2, 3, 4, 5, 5], hide: [0, 7],
+      addons: [],
       eyebrow: 'HORBACH · Private Absicherung',
       title: 'Ihr privater Versicherungsschirm',
       lead: 'Jede Absicherung schließt ein Stück des Schirms. Wo eine Lücke bleibt, regnet das Risiko direkt auf Sie und Ihre Familie.',
       aria: 'Person unter einem Regenschirm; ungeschützte Segmente sind eingerissen',
-      extraNote: 'Je nach Lebenssituation – nicht Teil des Schirms',
-      foot: '* Bezieht sich auf die 8 Bausteine des Schirms. Wohngebäude, Kfz und Altersvorsorge sind optionale Zusätze.'
+      extraNote: '',
+      foot: '* Bezieht sich auf die 6 Bausteine des privaten Schirms.'
     }
   };
   var mode = 'praxis', M = MODES[mode];
-  var N = PRAXIS_ITEMS.length; // beide Modi haben 8 Bausteine = 8 Schirmsegmente
+  var N = 8; // Schirmsegmente
+  MODES.praxis.seg = [0, 1, 2, 3, 4, 5, 6, 7]; MODES.praxis.hide = [];
   // [Segment, x, Stopp auf Schirm, Stopp ohne Schirm (Dach/Boden), Verzögerung ms, Dauer ms]; Segment -1 = außerhalb
   var DROPS = [[0,126,318,646,1609,1132],[0,143,283,646,1359,967],[0,157,263,646,744,1236],[0,171,249,646,575,1198],[0,182,239,646,1414,1100],[0,201,223,646,696,1282],[1,210,217,646,1744,955],[1,227,206,646,1584,1078],[1,241,198,646,560,1187],[1,256,191,646,1024,1281],[1,274,182,646,730,1128],[1,286,177,646,707,1159],[1,302,171,646,1726,1038],[1,322,164,646,1409,1180],[2,337,158,646,684,1215],[2,346,156,646,340,1051],[2,366,150,646,1748,1194],[2,377,147,646,161,1293],[2,395,142,646,351,1265],[2,411,139,646,1189,1214],[2,425,136,462,861,1104],[2,439,133,462,1586,1276],[2,451,131,462,56,1050],[2,465,129,462,903,1269],[3,484,126,462,448,1042],[3,499,124,462,85,1191],[3,517,122,462,339,977],[3,531,121,462,226,1112],[3,547,120,462,988,1049],[3,558,119,462,850,1188],[3,572,118,462,1356,1263],[3,584,117,462,418,1071],[3,604,117,462,765,950],[3,616,116,462,570,1159],[3,635,116,462,1410,1230],[4,646,116,462,73,1231],[4,663,116,462,194,1101],[4,678,117,462,695,1247],[4,691,117,462,720,1016],[4,707,118,462,1665,1238],[4,723,119,462,756,1189],[4,734,120,462,1220,1145],[4,753,121,462,407,1018],[4,768,123,462,719,1288],[4,778,124,462,221,1116],[4,798,126,462,1259,1226],[5,809,128,462,1289,1238],[5,826,131,462,884,1065],[5,842,134,462,982,1144],[5,856,136,462,1750,1031],[5,872,140,646,532,1104],[5,887,143,646,850,960],[5,900,146,646,629,1201],[5,920,152,646,293,1194],[5,928,154,646,1351,1268],[5,950,161,646,502,1100],[6,958,163,646,279,1150],[6,973,169,646,1090,1236],[6,990,176,646,971,968],[6,1005,182,646,548,1029],[6,1024,191,646,585,1100],[6,1037,198,646,972,1215],[6,1054,207,646,1236,1010],[6,1064,213,646,258,1103],[7,1081,225,646,1450,1122],[7,1097,238,646,1497,1221],[7,1107,247,646,716,1134],[7,1126,267,646,1664,1252],[7,1136,281,646,5,1079],[7,1153,316,646,1404,1005],[-1,20,646,646,1818,1279],[-1,48,646,646,391,1007],[-1,78,646,646,879,1218],[-1,100,646,646,1218,1294],[-1,1180,646,646,1411,1246],[-1,1205,646,646,1758,1197],[-1,1232,646,646,974,1200],[-1,1262,646,646,1397,1100]];
 
   // Stand je Ansicht merken, damit der Wechsel nichts verliert
   var state = {
     praxis: { covered: new Array(N).fill(false), addons: [false, false, false], form: {} },
-    privat: { covered: new Array(N).fill(false), addons: [false, false, false], form: {} }
+    privat: { covered: new Array(MODES.privat.items.length).fill(false), addons: [], form: {} }
   };
 
   // Datenaufnahme: [Gruppe, [[Feld, Typ, Auswahl?], ...]]
@@ -395,8 +396,7 @@ legend{float:left;width:100%;padding:0;margin-bottom:12px;font-size:13px;font-we
         ['Kinder (Anzahl)', 'number'], ['PLZ / Ort', 'text'],
         ['Berufsstatus', 'select', ['niedergelassen', 'angestellt', 'in Weiterbildung', 'Studium']]]],
       ['Absicherung', [['Fachrichtung', 'text'], ['Bruttoeinkommen pro Jahr (€)', 'number'], ['Gewünschte BU-Rente pro Monat (€)', 'number'],
-        ['Krankenversicherung', 'select', ['GKV', 'PKV']], ['Raucher', 'select', JN], ['Wohnfläche (m²)', 'number'],
-        ['Wohneigentum', 'select', JN]]],
+        ['Krankenversicherung', 'select', ['GKV', 'PKV']], ['Raucher', 'select', JN]]],
       ['Sonstiges', [['Bestehende Verträge / Ablauf', 'textarea'], ['Bemerkungen', 'textarea']]]
     ]
   };
@@ -455,6 +455,14 @@ legend{float:left;width:100%;padding:0;margin-bottom:12px;font-size:13px;font-we
       return b;
     });
     ['eyebrow', 'title', 'lead', 'extraNote', 'foot'].forEach(function (k) { $('#' + k).textContent = M[k]; });
+    $('#extra').hidden = !M.addons.length;
+    for (var p = 0; p < N; p++) {
+      var hid = M.hide.indexOf(p) > -1;
+      tears[p].style.display = nums[p].style.display = hid ? 'none' : '';
+      nums[p].textContent = M.seg[p] + 1;
+      panels[p].classList.toggle('pb', M.seg[p] % 2 === 1); // Farbe je Baustein, nicht je Segment
+      panels[p].classList.toggle('pa', M.seg[p] % 2 === 0);
+    }
     $('#praxisBld').style.display = $('#bu').style.display = m === 'praxis' ? '' : 'none';
     $('#homeBld').style.display = m === 'privat' ? '' : 'none';
     $('#scene').setAttribute('aria-label', M.aria);
@@ -466,10 +474,13 @@ legend{float:left;width:100%;padding:0;margin-bottom:12px;font-size:13px;font-we
   });
 
   function render() {
-    for (var i = 0; i < N; i++) {
-      panels[i].classList.toggle('on', covered[i]);
-      tears[i].classList.toggle('off', covered[i]);
-      nums[i].classList.toggle('on', covered[i]);
+    for (var p = 0; p < N; p++) {
+      var on = covered[M.seg[p]];
+      panels[p].classList.toggle('on', on);
+      tears[p].classList.toggle('off', on);
+      nums[p].classList.toggle('on', on);
+    }
+    for (var i = 0; i < coreChips.length; i++) {
       coreChips[i].classList.toggle('on', covered[i]);
       coreChips[i].setAttribute('aria-pressed', covered[i]);
       coreChips[i].querySelector('.pill').textContent = covered[i] ? 'Abgesichert' : 'Lücke';
@@ -480,7 +491,7 @@ legend{float:left;width:100%;padding:0;margin-bottom:12px;font-size:13px;font-we
       b.querySelector('.pill').textContent = addons[i] ? 'Ergänzt' : 'Optional';
     });
     drops.forEach(function (o) {
-      var d = o.d, open = d[0] < 0 || !covered[d[0]];
+      var d = o.d, open = d[0] < 0 || !covered[M.seg[d[0]]];
       // Privat: Tropfen treffen Kopf (±18) oder Schultern (±34) des Arztes, sonst den Boden
       var dx = Math.abs(d[1] - 668);
       var floor = mode === 'privat' && d[3] === 462 ? (dx < 18 ? 468 : dx < 34 ? 520 : 646) : d[3];
