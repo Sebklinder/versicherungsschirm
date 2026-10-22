@@ -838,9 +838,14 @@ legend{float:left;width:100%;padding:0;margin-bottom:12px;font-size:13px;font-we
       .concat(chosenAddons().map(function (it) { return it[0]; }));
     if (order.length) {
       s.appendChild(el('h2', 'Beratungsauftrag'));
-      s.appendChild(el('div', 'Für folgende Bereiche wird ein Angebot angefordert:'));
+      // Entwurf, nicht von HORBACH-Compliance freigegeben
+      s.appendChild(el('p', 'Hiermit beauftrage ich Sebastian Klinder (HORBACH Wirtschaftsberatung GmbH), für die folgenden Bereiche Angebote einzuholen und mir zur Entscheidung vorzulegen:'));
       var ol = s.appendChild(el('ul'));
       order.forEach(function (x) { ol.appendChild(el('li', x)); });
+      var gaps = covered.filter(function (x) { return x === 0; }).length;
+      s.appendChild(el('p', 'Ein Versicherungsvertrag kommt erst durch einen gesonderten Antrag zustande.' +
+        (gaps ? ' Auf die übrigen offenen Lücken wurde ich hingewiesen; für diese wünsche ich derzeit kein Angebot.' : '') +
+        ' Mit meiner Unterschrift bestätige ich diesen Beratungsauftrag.'));
     }
     s.appendChild(el('h2', 'Nächste Schritte'));
     var ul = s.appendChild(el('ul'));
