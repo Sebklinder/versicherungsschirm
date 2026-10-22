@@ -20,7 +20,7 @@ body{margin:0;background:#f4f1ec;font-family:Assistant,sans-serif;color:#2b2723}
 .panel{fill:#d9d3cb;stroke:#fff;stroke-width:1.4;transition:fill .8s ease}
 .panel.on.pa{fill:#697d0f}.panel.on.pb{fill:#b4c800}.panel.chk{fill:#ecbd00}
 .tear{opacity:1;transition:opacity .6s ease}.tear.off{opacity:0}
-.pnum{font:700 22px Assistant,sans-serif;fill:#6b6259;transition:fill .6s ease}.pnum.on{fill:#fff}
+.pnum{font:700 22px Assistant,sans-serif;fill:#6b6259;transition:fill .6s ease}.pnum.on{fill:#fff}.pnum.on.pb{fill:#000} /* CD: keine weiße Schrift auf FreshGreen */
 .lane{position:absolute;top:0;width:2px;pointer-events:none}
 .drop{position:absolute;left:0;top:-30px;width:2px;height:16px;border-radius:2px;background:rgba(0,110,150,.5);transform-origin:50% 100%;animation:fall linear infinite}
 .drop.leak{background:rgba(175,0,95,.72)}
@@ -33,10 +33,10 @@ body{margin:0;background:#f4f1ec;font-family:Assistant,sans-serif;color:#2b2723}
 .chip>span:nth-child(2){flex:1;min-width:0}
 .chip .t{display:block;font-weight:700;font-size:16px;line-height:1.2;color:#2b2723}
 .chip .r{display:block;font-size:14px;line-height:1.3;color:#5d554c;margin-top:2px}
-.chip .pill{position:absolute;top:10px;right:12px;white-space:nowrap;font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:4px 8px;border-radius:999px;color:#af005f;background:#f8e7ef}
+.chip .pill{position:absolute;top:10px;right:12px;white-space:nowrap;font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:4px 8px;border-radius:999px;color:#fff;background:#af005f} /* CD: weiße Schrift auf Berry */
 .chip.on .pill{color:#fff;background:#697d0f}
 .chip.chk{border-color:#ecbd00;background:#fdf6d8}.chip.chk .num,.chip.chk .pill{background:#ecbd00;color:#2b2723}
-.chip .grp{position:absolute;top:11px;left:14px;font-size:12px;font-weight:700;color:#006e96}
+.chip .grp{position:absolute;top:11px;left:14px;font-size:12px;font-weight:700;color:#697d0f}
 .chip.addon{border-style:dashed}.chip.addon .pill{color:#5d554c;background:#eeeae4}
 .chip.addon.on{border-style:solid;border-color:#006e96;background:#e9f2f6}
 .chip.addon.on .num,.chip.addon.on .pill{background:#006e96;color:#fff}
@@ -107,6 +107,7 @@ legend{float:left;width:100%;padding:0;margin-bottom:12px;font-size:13px;font-we
   #sheet .sign{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:44px;break-inside:avoid}
   #sheet .sign div{border-top:1px solid #2b2723;padding-top:4px;font-size:11px;color:#5d554c}
   #sheet .disc{margin-top:18px;font-size:10px;color:#5d554c}
+  #sheet .logo{display:block;width:60mm;margin:0 0 8mm auto} /* CD: A4 = 60 mm Logobreite */
 }
 .fade{transition:opacity .9s ease,transform .9s ease}
 #rain{transition:opacity .9s ease}
@@ -119,16 +120,22 @@ legend{float:left;width:100%;padding:0;margin-bottom:12px;font-size:13px;font-we
 <body>
 <div class="stage" id="stage">
 
-<svg aria-hidden="true" width="96" height="64" viewBox="0 0 96 64" style="position:absolute;top:0;right:0">
-<rect x="58" y="-12" width="26" height="26" transform="rotate(45 71 1)" fill="#b4c800"/>
-<rect x="76" y="6" width="18" height="18" transform="rotate(45 85 15)" fill="#006e96"/>
-<rect x="40" y="6" width="14" height="14" transform="rotate(45 47 13)" fill="#ecbd00"/>
-<rect x="64" y="30" width="12" height="12" transform="rotate(45 70 36)" fill="#697d0f"/>
+<!-- Mosaik laut CD-Manual: größter Stein 100 % FreshGreen im Anschnitt, kleinere in helleren Abstufungen, Steine berühren sich -->
+<svg aria-hidden="true" width="190" height="40" viewBox="0 0 190 40" style="position:absolute;top:0;right:0">
+<g transform="translate(170 -6) rotate(45) scale(.55)">
+<rect x="-40" y="-40" width="80" height="80" rx="9" fill="#b4c800"/>
+<rect x="-40" y="44" width="40" height="40" rx="7" fill="#d2de66"/>
+<rect x="4" y="44" width="24" height="24" rx="5" fill="#e9efb3"/>
+<rect x="-40" y="88" width="16" height="16" rx="4" fill="#f0f4cc"/>
+</g>
 </svg>
 
 <header style="display:flex;justify-content:space-between;align-items:flex-end;gap:40px;padding:28px 56px 0">
 <div style="display:flex;flex-direction:column;gap:8px;max-width:660px">
+<div style="display:flex;align-items:center;gap:28px;margin-bottom:14px"><!-- Schutzzone ≈ Versalhöhe des Logos -->
+<img src="logo.png" alt="HORBACH" width="162" height="28" style="display:block">
 <div id="eyebrow" style="font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#697d0f"></div>
+</div>
 <h1 id="title" style="margin:0;font-size:36px;line-height:1.08;font-weight:800"></h1>
 <p id="lead" style="margin:0;font-size:18px;line-height:1.45;color:#5d554c"></p>
 </div>
@@ -317,7 +324,7 @@ legend{float:left;width:100%;padding:0;margin-bottom:12px;font-size:13px;font-we
 <div class="grid4" id="core"></div>
 <div class="grid4" id="extra" style="margin-top:24px;padding-top:20px;border-top:1.5px solid #eeeae4">
 <div style="display:flex;flex-direction:column;justify-content:center;gap:2px">
-<span style="font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#006e96">Optionale Zusätze</span></div>
+<span style="font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#697d0f">Optionale Zusätze</span></div>
 </div>
 </section>
 
@@ -364,7 +371,7 @@ legend{float:left;width:100%;padding:0;margin-bottom:12px;font-size:13px;font-we
     praxis: {
       items: PRAXIS_ITEMS,
       addons: [['Gebäude', 'Nur bei eigenem Praxisobjekt'], ['bAV', 'Betriebliche Altersversorgung'], ['bKV', 'Betriebliche Krankenversicherung']],
-      eyebrow: 'HORBACH · Betriebliche Absicherung der Arztpraxis',
+      eyebrow: 'Betriebliche Absicherung der Arztpraxis',
       title: 'Der Versicherungsschirm Ihrer Praxis',
       lead: 'Jede Absicherung schließt ein Stück des Schirms. Wo eine Lücke bleibt, regnet das Risiko direkt auf Ihre Praxis.',
       aria: 'Arztpraxis unter einem Regenschirm; ungeschützte Segmente sind eingerissen',
@@ -383,7 +390,7 @@ legend{float:left;width:100%;padding:0;margin-bottom:12px;font-size:13px;font-we
       // 6 Bausteine auf 8 Schirmsegmente: die schmalen Außensegmente werden paarweise zusammengelegt
       seg: [0, 0, 1, 2, 3, 4, 5, 5], hide: [0, 7],
       addons: [],
-      eyebrow: 'HORBACH · Private Absicherung',
+      eyebrow: 'Private Absicherung',
       title: 'Ihr privater Versicherungsschirm',
       lead: 'Jede Absicherung schließt ein Stück des Schirms. Wo eine Lücke bleibt, regnet das Risiko direkt auf Sie und Ihre Familie.',
       aria: 'Person unter einem Regenschirm; ungeschützte Segmente sind eingerissen',
@@ -485,7 +492,7 @@ legend{float:left;width:100%;padding:0;margin-bottom:12px;font-size:13px;font-we
         key: 'paOn', toggle: 'Praxisausfallversicherung aufnehmen',
         hint: 'Hinweis: Für die Praxisausfallversicherung benötigen wir zusätzlich Angaben zur gesundheitlichen Situation (Gesundheitsfragen des Versicherers).'
       }],
-      ['Sonstiges', [['Bestehende Verträge / Ablauf', 'textarea'], ['Bemerkungen', 'textarea']]]
+      ['Sonstiges', [['Weitere Verträge / Ablauf', 'textarea'], ['Bemerkungen', 'textarea']]]
     ],
     privat: [
       ['Person', [['Name', 'text'], ['Geburtsdatum', 'date'],
@@ -494,7 +501,7 @@ legend{float:left;width:100%;padding:0;margin-bottom:12px;font-size:13px;font-we
         ['Berufsstatus', 'select', ['niedergelassen', 'angestellt', 'in Weiterbildung', 'Studium']]]],
       ['Absicherung', [['Fachrichtung', 'text'], ['Bruttoeinkommen pro Jahr (€)', 'number'], ['Gewünschte BU-Rente pro Monat (€)', 'number'],
         ['Krankenversicherung', 'select', ['GKV', 'PKV']], ['Raucher', 'select', JN]]],
-      ['Sonstiges', [['Bestehende Verträge / Ablauf', 'textarea'], ['Bemerkungen', 'textarea']]]
+      ['Sonstiges', [['Weitere Verträge / Ablauf', 'textarea'], ['Bemerkungen', 'textarea']]]
     ]
   };
   var covered = state[mode].covered, addons = state[mode].addons;
@@ -574,6 +581,7 @@ legend{float:left;width:100%;padding:0;margin-bottom:12px;font-size:13px;font-we
       nums[p].textContent = M.seg[p] + 1;
       panels[p].classList.toggle('pb', M.seg[p] % 2 === 1); // Farbe je Baustein, nicht je Segment
       panels[p].classList.toggle('pa', M.seg[p] % 2 === 0);
+      nums[p].classList.toggle('pb', M.seg[p] % 2 === 1);
     }
     $('#praxisBld').style.display = m === 'praxis' ? '' : 'none';
     $('#homeBld').style.display = m === 'privat' ? '' : 'none';
@@ -645,7 +653,7 @@ legend{float:left;width:100%;padding:0;margin-bottom:12px;font-size:13px;font-we
     capForm.innerHTML = '';
     $('#dlgTitle').textContent = 'Daten für Angebot – ' + (mode === 'praxis' ? 'Praxis' : 'Privat');
     sumFields = [];
-    FORM[mode].forEach(function (g) {
+    formGroups().forEach(function (g) {
       var fs = el('fieldset'), grid = el('div', null, 'fgrid'), opt = g[2];
       fs.appendChild(el('legend', g[0]));
       if (opt) { // aufklappbarer Bereich, nur bei Anwahl sichtbar
@@ -671,7 +679,7 @@ legend{float:left;width:100%;padding:0;margin-bottom:12px;font-size:13px;font-we
           fd.appendChild(tiles); grid.appendChild(fd);
           return;
         }
-        var l = el('label', f[0], f[1] === 'textarea' ? 'wide' : ''), input;
+        var l = el('label', f[3] || f[0], f[1] === 'textarea' ? 'wide' : ''), input;
         if (f[1] === 'sum') {
           input = el('input', null, 'sum'); input.readOnly = true; input.tabIndex = -1;
           sumFields.push({ input: input, f: f });
@@ -721,7 +729,7 @@ legend{float:left;width:100%;padding:0;margin-bottom:12px;font-size:13px;font-we
     s.innerHTML = '';
     s.appendChild(el('h1', 'Datenaufnahme Versicherungsangebot – ' + (mode === 'praxis' ? 'Praxis' : 'Privat')));
     s.appendChild(el('div', 'Stand ' + new Date().toLocaleDateString('de-DE') + ' · Sebastian Klinder · Finanz- & Niederlassungsberatung · HORBACH'));
-    FORM[mode].forEach(function (g) {
+    formGroups().forEach(function (g) {
       if (g[2] && !vals[g[2].key]) return; // nicht angewählter Bereich kommt nicht aufs Blatt
       s.appendChild(el('h2', g[0]));
       t = s.appendChild(el('table'));
@@ -729,7 +737,7 @@ legend{float:left;width:100%;padding:0;margin-bottom:12px;font-size:13px;font-we
       g[1].forEach(function (f) {
         if (f[1] === 'sub') { row(t, f[0], '').className = 'sub'; return; }
         var v = vals[f[0]];
-        row(t, f[0], !v ? '–' : f[0].indexOf('(€)') > -1 ? eur(v) : v);
+        row(t, f[3] || f[0], !v ? '–' : f[0].indexOf('(€)') > -1 ? eur(v) : v);
       });
     });
     s.appendChild(el('h2', 'Versicherungsschirm'));
@@ -740,6 +748,19 @@ legend{float:left;width:100%;padding:0;margin-bottom:12px;font-size:13px;font-we
     row(t, 'Lücken – anzubieten', names(0));
     row(t, 'Optionale Zusätze gewünscht', chosenAddons().map(function (a) { return a[0]; }).join(', ') || '–');
   }
+  // Datenaufnahme plus je bestehendem Vertrag (abgesichert oder prüfen) Versicherer, Nummer, Ablauf – vor "Sonstiges"
+  function formGroups() {
+    var f = [];
+    M.items.forEach(function (it, i) {
+      if (!covered[i]) return;
+      var n = fullName(it);
+      f.push([n + ' (' + STATUS[covered[i]] + ')', 'sub'], [n + ' – Versicherer', 'text', null, 'Versicherer'],
+        [n + ' – Versicherungsnummer', 'text', null, 'Versicherungsnummer'], [n + ' – Ablauf', 'text', null, 'Ablauf / Hauptfälligkeit']);
+    });
+    var g = FORM[mode].slice();
+    if (f.length) g.splice(g.length - 1, 0, ['Bestehende Verträge', f]);
+    return g;
+  }
   function chosenAddons() { return M.addons.filter(function (_, i) { return addons[i]; }); }
   function fullName(it) { return it[2] ? 'Betriebsunterbrechung – ' + it[0] : it[0]; }
   function pill(text, cls) { return el('span', text, 'st ' + cls); }
@@ -748,6 +769,7 @@ legend{float:left;width:100%;padding:0;margin-bottom:12px;font-size:13px;font-we
   function buildResult() {
     var s = $('#sheet'), vals = state[mode].form, n = custName(), t, tr, td;
     s.innerHTML = '';
+    var logo = s.appendChild(el('img', null, 'logo')); logo.src = 'logo.png'; logo.alt = 'HORBACH';
     s.appendChild(el('div', M.eyebrow, 'eyebrow'));
     s.appendChild(el('h1', n ? M.titleFor + n : M.title));
     s.appendChild(el('div', 'Beratungsergebnis vom ' + new Date().toLocaleDateString('de-DE') + ' · Sebastian Klinder · Finanz- & Niederlassungsberatung · HORBACH'));
@@ -761,7 +783,9 @@ legend{float:left;width:100%;padding:0;margin-bottom:12px;font-size:13px;font-we
     M.items.forEach(function (it, i) {
       tr = t.appendChild(el('tr'));
       td = tr.appendChild(el('td')); td.appendChild(el('strong', (i + 1) + '. ' + fullName(it))); td.appendChild(el('small', it[1]));
-      tr.appendChild(el('td')).appendChild(pill(STATUS[covered[i]], 'st' + covered[i]));
+      td = tr.appendChild(el('td')); td.appendChild(pill(STATUS[covered[i]], 'st' + covered[i]));
+      var ins = [vals[fullName(it) + ' – Versicherer'], vals[fullName(it) + ' – Versicherungsnummer'] && 'Nr. ' + vals[fullName(it) + ' – Versicherungsnummer']].filter(Boolean).join(' · ');
+      if (covered[i] && ins) td.appendChild(el('small', ins));
       tr.appendChild(el('td', INFO[it[0]][1]));
     });
     chosenAddons().forEach(function (it) {
