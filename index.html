@@ -91,25 +91,27 @@ legend{float:left;width:100%;padding:0;margin-bottom:12px;font-size:13px;font-we
 @media print{
   .stage,dialog{display:none!important}
   body{background:#fff;height:auto!important}
-  #sheet{display:block;font-size:13px;color:#2b2723}
-  #sheet h1{font-size:22px;margin:0 0 2px}#sheet h2{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:#697d0f;margin:18px 0 6px}
-  #sheet table{width:100%;border-collapse:collapse}#sheet td{padding:5px 8px;border-bottom:1px solid #e3ded7;vertical-align:top}
-  #sheet td:first-child{width:38%;color:#5d554c}
-  #sheet tr.sub td{padding-top:12px;font-weight:700;color:#2b2723}
-  #sheet{-webkit-print-color-adjust:exact;print-color-adjust:exact}
-  #sheet .eyebrow{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#697d0f;margin-bottom:4px}
-  #sheet svg{display:block;width:100%;height:auto;margin:10px 0 4px}
-  #sheet .res td:first-child{width:auto}
-  #sheet .res td:nth-child(1){width:34%}#sheet .res td:nth-child(2){width:16%}
-  #sheet .res small{display:block;color:#5d554c}
-  #sheet .st{display:inline-block;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:700;white-space:nowrap}
-  #sheet .st0{background:#af005f;color:#fff}#sheet .st1{background:#697d0f;color:#fff}#sheet .st2{background:#ecbd00;color:#2b2723}#sheet .st3{background:#006e96;color:#fff}
-  #sheet ul{margin:0;padding-left:18px}#sheet li{margin:3px 0}
-  #sheet .sign{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:44px;break-inside:avoid}
-  #sheet .sign div{border-top:1px solid #2b2723;padding-top:4px;font-size:11px;color:#5d554c}
-  #sheet .disc{margin-top:18px;font-size:10px;color:#5d554c}
-  #sheet .logo{display:block;width:60mm;margin:0 0 8mm auto} /* CD: A4 = 60 mm Logobreite */
+  #sheet{display:block}
 }
+/* Dokument-Stil: gilt für den Ausdruck (#sheet) und die Vorschau im Fenster (#docView) */
+.doc{font-size:13px;color:#2b2723}
+.doc h1{font-size:22px;margin:0 0 2px}.doc h2{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:#697d0f;margin:18px 0 6px}
+.doc table{width:100%;border-collapse:collapse}.doc td{padding:5px 8px;border-bottom:1px solid #e3ded7;vertical-align:top}
+.doc td:first-child{width:38%;color:#5d554c}
+.doc tr.sub td{padding-top:12px;font-weight:700;color:#2b2723}
+.doc{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.doc .eyebrow{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#697d0f;margin-bottom:4px}
+.doc svg{display:block;width:100%;height:auto;margin:10px 0 4px}
+.doc .res td:first-child{width:auto}
+.doc .res td:nth-child(1){width:34%}.doc .res td:nth-child(2){width:16%}
+.doc .res small{display:block;color:#5d554c}
+.doc .st{display:inline-block;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:700;white-space:nowrap}
+.doc .st0{background:#af005f;color:#fff}.doc .st1{background:#697d0f;color:#fff}.doc .st2{background:#ecbd00;color:#2b2723}.doc .st3{background:#006e96;color:#fff}
+.doc ul{margin:0;padding-left:18px}.doc li{margin:3px 0}
+.doc .sign{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:44px;break-inside:avoid}
+.doc .sign div{border-top:1px solid #2b2723;padding-top:4px;font-size:11px;color:#5d554c}
+.doc .disc{margin-top:18px;font-size:10px;color:#5d554c}
+.doc .logo{display:block;width:60mm;margin:0 0 8mm auto} /* CD: A4 = 60 mm Logobreite */
 .fade{transition:opacity .9s ease,transform .9s ease}
 #rain{transition:opacity .9s ease}
 .rays{transform-box:fill-box;transform-origin:center;animation:spin 40s linear infinite}
@@ -150,7 +152,7 @@ legend{float:left;width:100%;padding:0;margin-bottom:12px;font-size:13px;font-we
 </div>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
 <button type="button" class="btn ghost" id="capture" style="justify-content:center">Daten aufnehmen</button>
-<button type="button" class="btn primary" id="result" style="justify-content:center">Ergebnis als PDF</button>
+<button type="button" class="btn primary" id="result" style="justify-content:center">Ergebnis ansehen</button>
 </div>
 </div>
 </header>
@@ -346,7 +348,7 @@ legend{float:left;width:100%;padding:0;margin-bottom:12px;font-size:13px;font-we
 <form id="capForm" class="dlg-b" onsubmit="return false"></form>
 <div class="dlg-f">
 <button type="button" class="btn ghost" id="dlgClose">Schließen</button>
-<button type="button" class="btn primary" id="dlgPrint">Datenblatt drucken / als PDF</button>
+<button type="button" class="btn primary" id="dlgPrint">Datenblatt ansehen</button>
 </div>
 </dialog>
 <dialog id="infoDlg" aria-labelledby="infoTitle">
@@ -354,7 +356,15 @@ legend{float:left;width:100%;padding:0;margin-bottom:12px;font-size:13px;font-we
 <div class="dlg-b"><h3>Warum wichtig</h3><p id="infoWhy"></p><h3>Kernleistung</h3><p id="infoCore"></p></div>
 <div class="dlg-f"><button type="button" class="btn ghost" id="infoClose">Schließen</button></div>
 </dialog>
-<div id="sheet"></div>
+<dialog id="docDlg" aria-labelledby="docTitle">
+<div class="dlg-h"><h2 id="docTitle"></h2><p>Vorschau der Dokumentation. Zum Speichern „Drucken / als PDF“ wählen.</p></div>
+<div class="dlg-b"><div id="docView" class="doc" style="padding:28px 32px;background:#fff;border-radius:8px;box-shadow:0 1px 3px rgba(0,0,0,.12)"></div></div>
+<div class="dlg-f">
+<button type="button" class="btn ghost" id="docClose">Schließen</button>
+<button type="button" class="btn primary" id="docPrint">Drucken / als PDF</button>
+</div>
+</dialog>
+<div id="sheet" class="doc"></div>
 
 <script>
 (function () {
@@ -828,8 +838,17 @@ legend{float:left;width:100%;padding:0;margin-bottom:12px;font-size:13px;font-we
     ['Ort, Datum', n || (mode === 'praxis' ? 'Praxisinhaber/in' : 'Kunde/Kundin'), 'Sebastian Klinder, HORBACH'].forEach(function (x) { sign.appendChild(el('div', x)); });
     s.appendChild(el('p', DISC, 'disc'));
   }
-  $('#dlgPrint').addEventListener('click', function () { buildSheet(); window.print(); });
-  $('#result').addEventListener('click', function () { buildResult(); window.print(); });
+  // Erst ansehen, dann drucken: die Vorschau zeigt eine Kopie des Druckblatts
+  function preview(build, title) {
+    build();
+    $('#docTitle').textContent = title;
+    $('#docView').innerHTML = $('#sheet').innerHTML;
+    $('#docDlg').showModal();
+  }
+  $('#dlgPrint').addEventListener('click', function () { preview(buildSheet, 'Datenblatt'); });
+  $('#result').addEventListener('click', function () { preview(buildResult, 'Beratungsergebnis'); });
+  $('#docPrint').addEventListener('click', function () { window.print(); });
+  $('#docClose').addEventListener('click', function () { $('#docDlg').close(); });
   $('#reset').addEventListener('click', function () {
     if (!confirm('Neues Gespräch beginnen? Alle Markierungen und Eingaben werden gelöscht.')) return;
     state = freshState();
