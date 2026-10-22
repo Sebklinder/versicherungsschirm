@@ -89,7 +89,11 @@ legend{float:left;width:100%;padding:0;margin-bottom:12px;font-size:13px;font-we
   #sheet td:first-child{width:38%;color:#5d554c}
   #sheet tr.sub td{padding-top:12px;font-weight:700;color:#2b2723}
 }
-@media (prefers-reduced-motion:reduce){.drop{animation:none;opacity:0}.panel,.tear,.pnum,.chip,.chip .num{transition:none}}
+.fade{transition:opacity .9s ease,transform .9s ease}
+#rain{transition:opacity .9s ease}
+.rays{transform-box:fill-box;transform-origin:center;animation:spin 40s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.drop{animation:none;opacity:0}.rays{animation:none}.panel,.tear,.pnum,.chip,.chip .num,.fade,#rain{transition:none}}
 </style>
 </head>
 <body>
@@ -122,6 +126,33 @@ legend{float:left;width:100%;padding:0;margin-bottom:12px;font-size:13px;font-we
 <svg id="scene" role="img" aria-label="Arztpraxis unter einem Regenschirm; ungeschützte Segmente sind eingerissen" width="1280" height="680" viewBox="0 0 1280 680" style="position: absolute; left: 0; top: 0">
 <rect x="0" y="646" width="1280" height="34" fill="#efebe5"></rect>
 <line x1="0" y1="646" x2="1280" y2="646" stroke="#cfc8bf" stroke-width="2"></line>
+
+<!-- Sonne kommt mit wachsendem Schutz hinter der Wolke hervor (Steuerung in render) -->
+<defs><radialGradient id="glow"><stop offset="0" stop-color="#ecbd00" stop-opacity=".45"></stop><stop offset=".5" stop-color="#ecbd00" stop-opacity="0"></stop></radialGradient></defs>
+<g id="sun" class="fade" style="opacity:.25">
+<circle cx="1090" cy="150" r="300" fill="url(#glow)"></circle>
+<g class="rays" stroke="#ecbd00" stroke-width="6" stroke-linecap="round">
+<line x1="1144.0" y1="150.0" x2="1164.0" y2="150.0"></line>
+<line x1="1136.8" y1="177.0" x2="1154.1" y2="187.0"></line>
+<line x1="1117.0" y1="196.8" x2="1127.0" y2="214.1"></line>
+<line x1="1090.0" y1="204.0" x2="1090.0" y2="224.0"></line>
+<line x1="1063.0" y1="196.8" x2="1053.0" y2="214.1"></line>
+<line x1="1043.2" y1="177.0" x2="1025.9" y2="187.0"></line>
+<line x1="1036.0" y1="150.0" x2="1016.0" y2="150.0"></line>
+<line x1="1043.2" y1="123.0" x2="1025.9" y2="113.0"></line>
+<line x1="1063.0" y1="103.2" x2="1053.0" y2="85.9"></line>
+<line x1="1090.0" y1="96.0" x2="1090.0" y2="76.0"></line>
+<line x1="1117.0" y1="103.2" x2="1127.0" y2="85.9"></line>
+<line x1="1136.8" y1="123.0" x2="1154.1" y2="113.0"></line>
+</g>
+<circle cx="1090" cy="150" r="40" fill="#ecbd00"></circle>
+</g>
+<g id="cloud" class="fade" fill="#cfc8bf">
+<ellipse cx="1080" cy="182" rx="84" ry="30"></ellipse>
+<circle cx="1040" cy="166" r="32"></circle>
+<circle cx="1088" cy="148" r="44"></circle>
+<circle cx="1132" cy="170" r="30"></circle>
+</g>
 
 <path d="M640 382 L640 448 Q640 463 625 463 Q611 463 611 451" fill="none" stroke="#4a443d" stroke-width="6" stroke-linecap="round"></path>
 <line x1="640" y1="122" x2="640" y2="94" stroke="#4a443d" stroke-width="5" stroke-linecap="round"></line>
@@ -499,6 +530,12 @@ legend{float:left;width:100%;padding:0;margin-bottom:12px;font-size:13px;font-we
       o.drop.classList.toggle('leak', d[0] >= 0 && open);
     });
     $('#badge').style.display = covered.every(Boolean) ? 'flex' : 'none';
+    // Je mehr abgesichert, desto mehr Sonne: Wolke zieht ab, Regen lässt nach, bei 100 % ist er weg
+    var pct = covered.filter(Boolean).length / covered.length;
+    $('#sun').style.opacity = .25 + .75 * pct;
+    $('#cloud').style.opacity = 1 - pct;
+    $('#cloud').style.transform = 'translateX(' + (-140 * pct) + 'px)';
+    rain.style.opacity = pct === 1 ? 0 : 1 - .7 * pct;
   }
 
 
