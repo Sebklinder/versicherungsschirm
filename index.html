@@ -61,7 +61,7 @@ dialog{width:min(900px,94vw);max-height:92vh;border:0;border-radius:16px;padding
 dialog::backdrop{background:rgba(43,39,35,.5)}
 .dlg-h{padding:22px 24px 16px;background:#fff;border-bottom:1.5px solid #e3ded7}.dlg-h h2{margin:0;font-size:24px;font-weight:800}.dlg-h p{margin:4px 0 0;font-size:14px;color:#5d554c}
 .dlg-b{padding:18px 24px 4px;overflow:auto;max-height:calc(92vh - 190px)}
-.dlg-f{padding:14px 24px;display:flex;justify-content:flex-end;gap:10px;background:#fff;border-top:1.5px solid #e3ded7}
+.dlg-f{padding:14px 24px;display:flex;flex-wrap:wrap;justify-content:flex-end;gap:10px;background:#fff;border-top:1.5px solid #e3ded7}
 /* Jede Gruppe als Kachel wie auf der Hauptseite */
 fieldset{margin:0 0 16px;padding:16px 18px 18px;border:1.5px solid #e3ded7;border-radius:12px;background:#fff}
 legend{float:left;width:100%;padding:0;margin-bottom:12px;font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#697d0f}
@@ -109,10 +109,16 @@ legend{float:left;width:100%;padding:0;margin-bottom:12px;font-size:13px;font-we
 .doc .st{display:inline-block;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:700;white-space:nowrap}
 .doc .st0{background:#af005f;color:#fff}.doc .st1{background:#697d0f;color:#fff}.doc .st2{background:#ecbd00;color:#2b2723}.doc .st3{background:#006e96;color:#fff}
 .doc ul{margin:0;padding-left:18px}.doc li{margin:3px 0}
-.doc .sign{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:44px;break-inside:avoid}
-.doc .sign div{border-top:1px solid #2b2723;padding-top:4px;font-size:11px;color:#5d554c}
+.doc .sign{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:16px;break-inside:avoid}
+.doc .sign .v{height:56px;display:flex;align-items:flex-end;font-size:13px}.doc .sign .v img{max-height:56px;max-width:100%}
+.doc .sign .l{border-top:1px solid #2b2723;padding-top:4px;font-size:11px;color:#5d554c}
+.pad{margin-bottom:16px;padding:12px 14px;border:1.5px solid #e3ded7;border-radius:12px;background:#fff}
+.pad-h{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;font-weight:700}
+.pad canvas{display:block;width:100%;height:170px;border-bottom:1.5px solid #2b2723;background:#faf8f5;touch-action:none;cursor:crosshair}
 .doc .disc{margin-top:18px;font-size:10px;color:#5d554c}
 .doc .logo{display:block;width:60mm;margin:0 0 8mm auto} /* CD: A4 = 60 mm Logobreite */
+.doc .newpage{margin-top:36px;padding-top:24px;border-top:2px dashed #e3ded7} /* Vorschau: Seitenwechsel andeuten */
+@media print{.doc .newpage{break-before:page;margin-top:0;padding-top:0;border:0}}
 .fade{transition:opacity .9s ease,transform .9s ease}
 #rain{transition:opacity .9s ease}
 .rays{transform-box:fill-box;transform-origin:center;animation:spin 40s linear infinite}
@@ -153,7 +159,7 @@ legend{float:left;width:100%;padding:0;margin-bottom:12px;font-size:13px;font-we
 </div>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
 <button type="button" class="btn ghost" id="capture" style="justify-content:center">Daten aufnehmen</button>
-<button type="button" class="btn primary" id="result" style="justify-content:center">Ergebnis ansehen</button>
+<button type="button" class="btn primary" id="result" style="justify-content:center">Dokumentation ansehen</button>
 </div>
 </div>
 </header>
@@ -337,7 +343,7 @@ legend{float:left;width:100%;padding:0;margin-bottom:12px;font-size:13px;font-we
 
 <footer style="padding:16px 56px;display:flex;justify-content:space-between;align-items:center;gap:24px;font-size:14px;color:#5d554c">
 <span><span id="foot"></span><br><span id="disc"></span></span>
-<span style="flex:none">Sebastian Klinder · Finanz- &amp; Niederlassungsberatung · HORBACH</span>
+<span id="advisor" style="flex:none"></span>
 </footer>
 </div>
 
@@ -349,7 +355,7 @@ legend{float:left;width:100%;padding:0;margin-bottom:12px;font-size:13px;font-we
 <form id="capForm" class="dlg-b" onsubmit="return false"></form>
 <div class="dlg-f">
 <button type="button" class="btn ghost" id="dlgClose">Schließen</button>
-<button type="button" class="btn primary" id="dlgPrint">Datenblatt ansehen</button>
+<button type="button" class="btn primary" id="dlgPrint">Dokumentation ansehen</button>
 </div>
 </dialog>
 <dialog id="infoDlg" aria-labelledby="infoTitle">
@@ -362,7 +368,19 @@ legend{float:left;width:100%;padding:0;margin-bottom:12px;font-size:13px;font-we
 <div class="dlg-b"><div id="docView" class="doc" style="padding:28px 32px;background:#fff;border-radius:8px;box-shadow:0 1px 3px rgba(0,0,0,.12)"></div></div>
 <div class="dlg-f">
 <button type="button" class="btn ghost" id="docClose">Schließen</button>
+<button type="button" class="btn ghost" id="docSign">Digital unterschreiben</button>
 <button type="button" class="btn primary" id="docPrint">Drucken / als PDF</button>
+</div>
+</dialog>
+<dialog id="signDlg" aria-labelledby="signTitle">
+<div class="dlg-h"><h2 id="signTitle">Digital unterschreiben</h2><p>Mit Finger oder Apple Pencil im Feld unterschreiben. Die Unterschrift bleibt nur in diesem Browserfenster.</p></div>
+<div class="dlg-b">
+<div class="pad"><div class="pad-h"><span id="padLabel"></span><button type="button" class="btn ghost" data-clear="0">Löschen</button></div><canvas data-pad="0" aria-label="Unterschriftsfeld Kunde"></canvas></div>
+<div class="pad"><div class="pad-h"><span id="padLabel1"></span><button type="button" class="btn ghost" data-clear="1">Löschen</button></div><canvas data-pad="1" aria-label="Unterschriftsfeld Berater"></canvas></div>
+</div>
+<div class="dlg-f">
+<button type="button" class="btn ghost" id="signCancel">Abbrechen</button>
+<button type="button" class="btn primary" id="signOk">Übernehmen</button>
 </div>
 </dialog>
 <div id="sheet" class="doc"></div>
@@ -462,8 +480,8 @@ legend{float:left;width:100%;padding:0;margin-bottom:12px;font-size:13px;font-we
   // Stand je Ansicht merken, damit der Wechsel nichts verliert
   function freshState() {
     return {
-      praxis: { covered: new Array(N).fill(0), addons: [false, false, false], form: {}, info: {} },
-      privat: { covered: new Array(MODES.privat.items.length).fill(0), addons: [], form: {}, info: {} }
+      praxis: { covered: new Array(N).fill(0), addons: [false, false, false], form: {}, info: {}, sign: [] },
+      privat: { covered: new Array(MODES.privat.items.length).fill(0), addons: [], form: {}, info: {}, sign: [] }
     };
   }
   var state = freshState();
@@ -497,6 +515,7 @@ legend{float:left;width:100%;padding:0;margin-bottom:12px;font-size:13px;font-we
     ['Summe Kosten und Gewinn (€)', 'sum', paAll.concat(PA_GEWINN)]);
   var FORM = {
     praxis: [
+      ['Beratung', [['Berater/in', 'text']]],
       ['Praxis', [['Praxisname', 'text'], ['Inhaber/in', 'text'], ['Fachrichtung', 'text'],
         ['Rechtsform', 'select', ['Einzelpraxis', 'BAG / Gemeinschaftspraxis', 'Praxisgemeinschaft', 'MVZ']],
         ['PLZ / Ort', 'text'], ['Niedergelassen seit', 'month']]],
@@ -510,6 +529,7 @@ legend{float:left;width:100%;padding:0;margin-bottom:12px;font-size:13px;font-we
       ['Sonstiges', [['Weitere Verträge / Ablauf', 'textarea'], ['Bemerkungen', 'textarea']]]
     ],
     privat: [
+      ['Beratung', [['Berater/in', 'text']]],
       ['Person', [['Name', 'text'], ['Geburtsdatum', 'date'],
         ['Familienstand', 'select', ['ledig', 'verheiratet / Partnerschaft', 'geschieden', 'verwitwet']],
         ['Kinder (Anzahl)', 'number'], ['PLZ / Ort', 'text'],
@@ -613,7 +633,13 @@ legend{float:left;width:100%;padding:0;margin-bottom:12px;font-size:13px;font-we
   });
 
   function custName() { return (state[mode].form[M.nameKey] || '').trim(); }
-  function setTitle() { var n = custName(); $('#title').textContent = n ? M.titleFor + n : M.title; }
+  // Berater/in: je Gespräch änderbar, letzter Name wird auf diesem Gerät als Vorgabe gemerkt
+  var savedAdvisor = ''; try { savedAdvisor = localStorage.getItem('berater') || ''; } catch (e) {}
+  function advisor() { return (state[mode].form['Berater/in'] || '').trim() || savedAdvisor || 'Sebastian Klinder'; }
+  function setTitle() {
+    var n = custName(); $('#title').textContent = n ? M.titleFor + n : M.title;
+    $('#advisor').textContent = advisor() + ' · HORBACH';
+  }
   function render() {
     setTitle();
     for (var p = 0; p < N; p++) {
@@ -710,7 +736,7 @@ legend{float:left;width:100%;padding:0;margin-bottom:12px;font-size:13px;font-we
           if (f[1] === 'number') { input.min = 0; input.step = 'any'; input.inputMode = 'decimal'; }
         }
         input.name = f[0];
-        if (f[1] !== 'sum') input.value = vals[f[0]] || '';
+        if (f[1] !== 'sum') input.value = vals[f[0]] || (f[0] === 'Berater/in' ? advisor() : '');
         l.appendChild(input);
         grid.appendChild(l);
       });
@@ -734,6 +760,7 @@ legend{float:left;width:100%;padding:0;margin-bottom:12px;font-size:13px;font-we
     var t = e.target, vals = state[mode].form;
     if (t.type === 'checkbox') { vals[t.name] = t.checked ? 'ja' : ''; $('#' + t.name).hidden = !t.checked; }
     else vals[t.name] = t.value;
+    if (t.name === 'Berater/in') { savedAdvisor = t.value.trim(); try { localStorage.setItem('berater', savedAdvisor); } catch (e) {} }
     updateSums();
     setTitle();
   }
@@ -744,13 +771,16 @@ legend{float:left;width:100%;padding:0;margin-bottom:12px;font-size:13px;font-we
   $('#infoClose').addEventListener('click', function () { $('#infoDlg').close(); });
 
   function row(t, k, v) { var tr = el('tr'); tr.appendChild(el('td', k)); tr.appendChild(el('td', v)); return t.appendChild(tr); }
-  function buildSheet() {
-    var s = $('#sheet'), vals = state[mode].form, t;
-    s.innerHTML = '';
-    s.appendChild(el('h1', 'Datenaufnahme Versicherungsangebot – ' + (mode === 'praxis' ? 'Praxis' : 'Privat')));
-    s.appendChild(el('div', 'Stand ' + new Date().toLocaleDateString('de-DE') + ' · Sebastian Klinder · Finanz- & Niederlassungsberatung · HORBACH'));
-    formGroups().forEach(function (g) {
-      if (g[2] && !vals[g[2].key]) return; // nicht angewählter Bereich kommt nicht aufs Blatt
+  // Datenaufnahme als zweiter Teil der Dokumentation, auf neuer Seite; leere Bereiche entfallen
+  function appendData(s) {
+    var vals = state[mode].form, t;
+    var groups = formGroups().filter(function (g) {
+      if (g[2] && !vals[g[2].key]) return false; // nicht angewählter Bereich kommt nicht aufs Blatt
+      return g[1].some(function (f) { return f[1] !== 'sub' && vals[f[0]]; });
+    });
+    if (!groups.length) return;
+    s.appendChild(el('h1', 'Datenaufnahme für das Angebot', 'newpage'));
+    groups.forEach(function (g) {
       s.appendChild(el('h2', g[0]));
       t = s.appendChild(el('table'));
       if (g[2]) row(t, 'Hinweis', g[2].hint);
@@ -760,15 +790,6 @@ legend{float:left;width:100%;padding:0;margin-bottom:12px;font-size:13px;font-we
         row(t, f[3] || f[0], !v ? '–' : f[0].indexOf('(€)') > -1 ? eur(v) : v);
       });
     });
-    s.appendChild(el('h2', 'Versicherungsschirm'));
-    t = s.appendChild(el('table'));
-    var names = function (s) { return M.items.filter(function (_, i) { return covered[i] === s; }).map(function (it) { return it[2] ? 'BU ' + it[0] : it[0]; }).join(', ') || '–'; };
-    row(t, 'Bereits abgesichert', names(1));
-    row(t, 'Bestehende Verträge – überprüfen', names(2));
-    row(t, 'Angebot angefordert (Beratungsauftrag)', names(3));
-    row(t, 'Offene Lücken – kein Auftrag', names(0));
-    row(t, 'Optionale Zusätze gewünscht', chosenAddons().map(function (a) { return a[0]; }).join(', ') || '–');
-    row(t, 'Im Gespräch erläutert (Info)', explained().join(', ') || '–');
   }
   function explained() {
     var seen = state[mode].info;
@@ -792,14 +813,14 @@ legend{float:left;width:100%;padding:0;margin-bottom:12px;font-size:13px;font-we
   function fullName(it) { return it[2] ? 'Betriebsunterbrechung – ' + it[0] : it[0]; }
   function pill(text, cls) { return el('span', text, 'st ' + cls); }
 
-  // Beratungsergebnis für den Kunden: Schirm, Status je Baustein, nächste Schritte, Unterschriften
-  function buildResult() {
+  // Ein Druckdokument: Beratungsergebnis (Schirm, Status, Auftrag, nächste Schritte), dann Datenaufnahme, dann Unterschriften
+  function buildDoc() {
     var s = $('#sheet'), vals = state[mode].form, n = custName(), t, tr, td;
     s.innerHTML = '';
     var logo = s.appendChild(el('img', null, 'logo')); logo.src = 'logo.png'; logo.alt = 'HORBACH';
     s.appendChild(el('div', M.eyebrow, 'eyebrow'));
     s.appendChild(el('h1', n ? M.titleFor + n : M.title));
-    s.appendChild(el('div', 'Beratungsergebnis vom ' + new Date().toLocaleDateString('de-DE') + ' · Sebastian Klinder · Finanz- & Niederlassungsberatung · HORBACH'));
+    s.appendChild(el('div', 'Beratungsergebnis vom ' + new Date().toLocaleDateString('de-DE') + ' · ' + advisor() + ' · HORBACH'));
     var svg = $('#scene').cloneNode(true);
     svg.removeAttribute('style'); svg.removeAttribute('height');
     svg.setAttribute('width', '100%'); svg.setAttribute('viewBox', '100 70 1080 590');
@@ -839,7 +860,7 @@ legend{float:left;width:100%;padding:0;margin-bottom:12px;font-size:13px;font-we
     if (order.length) {
       s.appendChild(el('h2', 'Beratungsauftrag'));
       // Entwurf, nicht von HORBACH-Compliance freigegeben
-      s.appendChild(el('p', 'Hiermit beauftrage ich Sebastian Klinder (HORBACH Wirtschaftsberatung GmbH), für die folgenden Bereiche Angebote einzuholen und mir zur Entscheidung vorzulegen:'));
+      s.appendChild(el('p', 'Hiermit beauftrage ich ' + advisor() + ' (HORBACH Wirtschaftsberatung GmbH), für die folgenden Bereiche Angebote einzuholen und mir zur Entscheidung vorzulegen:'));
       var ol = s.appendChild(el('ul'));
       order.forEach(function (x) { ol.appendChild(el('li', x)); });
       var gaps = covered.filter(function (x) { return x === 0; }).length;
@@ -850,10 +871,19 @@ legend{float:left;width:100%;padding:0;margin-bottom:12px;font-size:13px;font-we
     s.appendChild(el('h2', 'Nächste Schritte'));
     var ul = s.appendChild(el('ul'));
     (steps.length ? steps : ['Absicherung vollständig – jährliche Überprüfung vereinbaren']).forEach(function (x) { ul.appendChild(el('li', x)); });
-    if (vals['Bemerkungen']) { s.appendChild(el('h2', 'Bemerkungen')); s.appendChild(el('div', vals['Bemerkungen'])); }
+    appendData(s);
 
-    var sign = s.appendChild(el('div', null, 'sign'));
-    ['Ort, Datum', n || (mode === 'praxis' ? 'Praxisinhaber/in' : 'Kunde/Kundin'), 'Sebastian Klinder, HORBACH'].forEach(function (x) { sign.appendChild(el('div', x)); });
+    // Unterschriften: digital gezeichnet (Bild + Zeitpunkt) oder leer für Unterschrift auf Papier
+    var sign = s.appendChild(el('div', null, 'sign')), sg = state[mode].sign,
+      ort = (vals['PLZ / Ort'] || '').replace(/^\d+\s*/, '');
+    [[sg[0] ? (ort ? ort + ', ' : '') + new Date().toLocaleDateString('de-DE') : '', 'Ort, Datum'],
+     [sg[0], n || (mode === 'praxis' ? 'Praxisinhaber/in' : 'Kunde/Kundin')],
+     [sg[1], advisor() + ', HORBACH']].forEach(function (x, k) {
+      var d = sign.appendChild(el('div')), v = d.appendChild(el('div', null, 'v'));
+      if (k === 0) v.textContent = x[0];
+      else if (x[0]) { var im = v.appendChild(el('img')); im.src = x[0][0]; im.alt = 'Unterschrift'; }
+      d.appendChild(el('div', x[1] + (k && x[0] ? ' · digital unterschrieben ' + x[0][1] : ''), 'l'));
+    });
     s.appendChild(el('p', DISC, 'disc'));
   }
   // Erst ansehen, dann drucken: die Vorschau zeigt eine Kopie des Druckblatts
@@ -861,10 +891,51 @@ legend{float:left;width:100%;padding:0;margin-bottom:12px;font-size:13px;font-we
     build();
     $('#docTitle').textContent = title;
     $('#docView').innerHTML = $('#sheet').innerHTML;
-    $('#docDlg').showModal();
+    if (!$('#docDlg').open) $('#docDlg').showModal();
   }
-  $('#dlgPrint').addEventListener('click', function () { preview(buildSheet, 'Datenblatt'); });
-  $('#result').addEventListener('click', function () { preview(buildResult, 'Beratungsergebnis'); });
+
+  // Unterschriftsfelder: Zeichnen per Pointer Events (Finger, Stift, Maus)
+  var pads = [].map.call(document.querySelectorAll('[data-pad]'), function (cv) {
+    var ctx = cv.getContext('2d'), p = { cv: cv }, last = null;
+    function pos(e) { var r = cv.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top]; }
+    cv.addEventListener('pointerdown', function (e) { cv.setPointerCapture(e.pointerId); last = pos(e); p.drawn = true; e.preventDefault(); });
+    cv.addEventListener('pointermove', function (e) {
+      if (!last) return;
+      var q = pos(e);
+      ctx.beginPath(); ctx.moveTo(last[0], last[1]); ctx.lineTo(q[0], q[1]); ctx.stroke();
+      last = q;
+    });
+    ['pointerup', 'pointercancel'].forEach(function (t) { cv.addEventListener(t, function () { last = null; }); });
+    p.reset = function () { // erst nach dem Öffnen aufrufen, vorher hat das Feld keine Größe
+      var d = window.devicePixelRatio || 1, r = cv.getBoundingClientRect();
+      cv.width = r.width * d; cv.height = r.height * d;
+      ctx.scale(d, d); ctx.lineWidth = 2.2; ctx.lineCap = ctx.lineJoin = 'round'; ctx.strokeStyle = '#000';
+      p.drawn = p.cleared = false;
+    };
+    return p;
+  });
+  document.querySelectorAll('[data-clear]').forEach(function (b) {
+    b.addEventListener('click', function () { var p = pads[b.dataset.clear]; p.reset(); p.cleared = true; });
+  });
+  $('#docSign').addEventListener('click', function () {
+    $('#padLabel').textContent = custName() || (mode === 'praxis' ? 'Praxisinhaber/in' : 'Kunde/Kundin');
+    $('#padLabel1').textContent = advisor() + ', HORBACH';
+    $('#signDlg').showModal();
+    pads.forEach(function (p) { p.reset(); });
+  });
+  $('#signCancel').addEventListener('click', function () { $('#signDlg').close(); });
+  $('#signOk').addEventListener('click', function () {
+    var sg = state[mode].sign, at = new Date().toLocaleString('de-DE', { dateStyle: 'short', timeStyle: 'short' });
+    pads.forEach(function (p, k) {
+      if (p.drawn) sg[k] = [p.cv.toDataURL('image/png'), at]; // neu gezeichnet ersetzt
+      else if (p.cleared) sg[k] = null; // gelöscht ohne neue Unterschrift
+    });
+    $('#signDlg').close();
+    preview(buildDoc, 'Beratungsdokumentation');
+  });
+  ['#dlgPrint', '#result'].forEach(function (id) {
+    $(id).addEventListener('click', function () { preview(buildDoc, 'Beratungsdokumentation'); });
+  });
   $('#docPrint').addEventListener('click', function () { window.print(); });
   $('#docClose').addEventListener('click', function () { $('#docDlg').close(); });
   $('#reset').addEventListener('click', function () {
