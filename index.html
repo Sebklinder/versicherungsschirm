@@ -56,10 +56,16 @@ dialog::backdrop{background:rgba(43,39,35,.5)}
 fieldset{border:0;margin:0 0 18px;padding:0}
 legend{padding:0;margin-bottom:10px;font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#697d0f}
 .fgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
-.fgrid label{display:flex;flex-direction:column;gap:4px;font-size:13px;font-weight:600;color:#5d554c}
+.fgrid label{display:flex;flex-direction:column;justify-content:flex-end;gap:4px;font-size:13px;font-weight:600;color:#5d554c}
 .fgrid .wide{grid-column:1/-1}
 .fgrid input,.fgrid select,.fgrid textarea{font:400 15px Assistant,sans-serif;color:#2b2723;min-height:40px;padding:8px 10px;border:1.5px solid #cfc8bf;border-radius:8px;background:#fff}
 .fgrid input:focus-visible,.fgrid select:focus-visible,.fgrid textarea:focus-visible{outline:3px solid #006e96;outline-offset:1px}
+[hidden]{display:none!important}
+.toggle{display:flex;align-items:center;gap:10px;min-height:44px;font-size:15px;font-weight:700;cursor:pointer}
+.toggle input{width:22px;height:22px;accent-color:#006e96}
+.fgrid .sub{grid-column:1/-1;margin-top:6px;padding-bottom:4px;border-bottom:1.5px solid #eeeae4;font-size:14px;font-weight:700;color:#2b2723}
+.fgrid .hint{grid-column:1/-1;margin:0;padding:10px 12px;border-radius:8px;border:1.5px solid #ecbd00;background:#fdf6d8;font-size:14px;line-height:1.4;color:#2b2723}
+.fgrid input.sum{background:#f4f1ec;font-weight:700}
 #sheet{display:none}
 @page{margin:16mm}
 @media print{
@@ -69,6 +75,7 @@ legend{padding:0;margin-bottom:10px;font-size:13px;font-weight:700;letter-spacin
   #sheet h1{font-size:22px;margin:0 0 2px}#sheet h2{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:#697d0f;margin:18px 0 6px}
   #sheet table{width:100%;border-collapse:collapse}#sheet td{padding:5px 8px;border-bottom:1px solid #e3ded7;vertical-align:top}
   #sheet td:first-child{width:38%;color:#5d554c}
+  #sheet tr.sub td{padding-top:12px;font-weight:700;color:#2b2723}
 }
 @media (prefers-reduced-motion:reduce){.drop{animation:none;opacity:0}.panel,.tear,.pnum,.chip,.chip .num{transition:none}}
 </style>
@@ -314,6 +321,31 @@ legend{padding:0;margin-bottom:10px;font-size:13px;font-weight:700;letter-spacin
 
   // Datenaufnahme: [Gruppe, [[Feld, Typ, Auswahl?], ...]]
   var JN = ['Nein', 'Ja'];
+
+  // Praxisausfall: Kostenarten laut Antrag; je Gruppe eine Summe, am Ende Gesamtsumme inkl. Gewinn
+  var PA_GROUPS = [
+    ['Personalkosten', ['Löhne und Gehälter', 'Gesetzliche soziale Aufwendungen', 'Beiträge zur Berufsgenossenschaft',
+      'Freiwillige soziale Aufwendungen', 'Aufwendungen für Altersversorgung/Unterstützung', 'Vermögenswirksame Leistungen',
+      'Fahrtkostenerstattung (Wohnung/Arbeitsstätte)', 'Aushilfslöhne', 'SV-Beiträge und pauschale Lohnsteuer für Aushilfen']],
+    ['Praxiskosten', ['Miete/Pacht oder ortsüblicher Mietwert inkl. Garage', 'Energiekosten (Gas, Strom, Wasser)',
+      'Reinigung und Instandhaltung betrieblicher Räume', 'Porto, Telefon etc.', 'Zeitschriften, Bücher', 'Buchführungskosten',
+      'Versicherungsbeiträge', 'Reparaturen und Instandhaltung technischer Anlagen']],
+    ['Steuern', ['Kfz-Steuer für Betriebsfahrzeuge', 'Nicht anrechenbare Vorsteuer']],
+    ['Finanzierungskosten (soweit betrieblich verursacht)', ['Praxiseinrichtung und technische Geräte', 'Betriebsfahrzeuge',
+      'Fremdkapital-/Bankkreditzinsen und Leasingraten']],
+    ['Sonstige fortlaufende Kosten', ['Sonstige fortlaufende Kosten']]
+  ];
+  var PA_GEWINN = 'Gewinn, falls mitversichert (€)';
+  var paFields = [['Geschäftsjahr', 'number']], paAll = [];
+  PA_GROUPS.forEach(function (g) {
+    var names = g[1].map(function (n) { return n + ' (€)'; });
+    paFields.push([g[0], 'sub']);
+    names.forEach(function (n) { paFields.push([n, 'number']); });
+    if (names.length > 1) paFields.push(['Gesamt ' + g[0].split(' (')[0] + ' (€)', 'sum', names]);
+    paAll = paAll.concat(names);
+  });
+  paFields.push(['Gewinn', 'sub'], [PA_GEWINN, 'number'],
+    ['Summe Kosten und Gewinn (€)', 'sum', paAll.concat(PA_GEWINN)]);
   var FORM = {
     praxis: [
       ['Praxis', [['Praxisname', 'text'], ['Inhaber/in', 'text'], ['Fachrichtung', 'text'],
@@ -322,7 +354,10 @@ legend{padding:0;margin-bottom:10px;font-size:13px;font-weight:700;letter-spacin
       ['Kennzahlen (Cyber & Inhalt)', [['Jahresumsatz (€)', 'number'], ['Anzahl Mitarbeiter', 'number'], ['Anzahl Gesellschafter', 'number']]],
       ['Werte Inhaltsversicherung', [['Einrichtung (€)', 'number'], ['Medizinische Geräte (€)', 'number'], ['Elektronik (€)', 'number'],
         ['Waren und Vorräte (€)', 'number'], ['Kühlgut (€)', 'number']]],
-      // shortcut: Praxisausfall-Kosten fehlen noch, Felder folgen vom Nutzer
+      ['Praxisausfallversicherung', paFields, {
+        key: 'paOn', toggle: 'Praxisausfallversicherung aufnehmen',
+        hint: 'Hinweis: Für die Praxisausfallversicherung benötigen wir zusätzlich Angaben zur gesundheitlichen Situation (Gesundheitsfragen des Versicherers).'
+      }],
       ['Sonstiges', [['Bestehende Verträge / Ablauf', 'textarea'], ['Bemerkungen', 'textarea']]]
     ],
     privat: [
@@ -445,12 +480,25 @@ legend{padding:0;margin-bottom:10px;font-size:13px;font-weight:700;letter-spacin
     var vals = state[mode].form;
     capForm.innerHTML = '';
     $('#dlgTitle').textContent = 'Daten für Angebot – ' + (mode === 'praxis' ? 'Praxis' : 'Privat');
+    sumFields = [];
     FORM[mode].forEach(function (g) {
-      var fs = el('fieldset'), grid = el('div', null, 'fgrid');
+      var fs = el('fieldset'), grid = el('div', null, 'fgrid'), opt = g[2];
       fs.appendChild(el('legend', g[0]));
+      if (opt) { // aufklappbarer Bereich, nur bei Anwahl sichtbar
+        var tl = el('label', null, 'toggle'), cb = el('input');
+        cb.type = 'checkbox'; cb.name = opt.key; cb.checked = !!vals[opt.key];
+        tl.appendChild(cb); tl.appendChild(document.createTextNode(opt.toggle));
+        fs.appendChild(tl);
+        grid.id = opt.key; grid.hidden = !cb.checked;
+        grid.appendChild(el('p', opt.hint, 'hint'));
+      }
       g[1].forEach(function (f) {
+        if (f[1] === 'sub') { grid.appendChild(el('div', f[0], 'sub')); return; }
         var l = el('label', f[0], f[1] === 'textarea' ? 'wide' : ''), input;
-        if (f[1] === 'select') {
+        if (f[1] === 'sum') {
+          input = el('input', null, 'sum'); input.readOnly = true; input.tabIndex = -1;
+          sumFields.push({ input: input, f: f });
+        } else if (f[1] === 'select') {
           input = el('select');
           input.appendChild(el('option', 'Bitte wählen')).value = '';
           f[2].forEach(function (o) { input.appendChild(el('option', o)); });
@@ -458,32 +506,56 @@ legend{padding:0;margin-bottom:10px;font-size:13px;font-weight:700;letter-spacin
           input = el('textarea'); input.rows = 3;
         } else {
           input = el('input'); input.type = f[1];
-          if (f[1] === 'number') { input.min = 0; input.inputMode = 'numeric'; }
+          if (f[1] === 'number') { input.min = 0; input.step = 'any'; input.inputMode = 'decimal'; }
         }
         input.name = f[0];
-        input.value = vals[f[0]] || '';
+        if (f[1] !== 'sum') input.value = vals[f[0]] || '';
         l.appendChild(input);
         grid.appendChild(l);
       });
       fs.appendChild(grid);
       capForm.appendChild(fs);
     });
+    updateSums();
     dlg.showModal();
   }
-  capForm.addEventListener('input', function (e) { state[mode].form[e.target.name] = e.target.value; });
+  var sumFields = [];
+  function eur(v) { return Number(v).toLocaleString('de-DE', { maximumFractionDigits: 2 }) + ' €'; }
+  function updateSums() {
+    var vals = state[mode].form;
+    sumFields.forEach(function (s) {
+      var v = s.f[2].reduce(function (a, n) { return a + (parseFloat(vals[n]) || 0); }, 0);
+      vals[s.f[0]] = v ? String(v) : '';
+      s.input.value = v ? eur(v) : '';
+    });
+  }
+  function onInput(e) {
+    var t = e.target, vals = state[mode].form;
+    if (t.type === 'checkbox') { vals[t.name] = t.checked ? 'ja' : ''; $('#' + t.name).hidden = !t.checked; }
+    else vals[t.name] = t.value;
+    updateSums();
+  }
+  capForm.addEventListener('input', onInput);
+  capForm.addEventListener('change', onInput); // ältere iPad-Safari melden Checkboxen nur per change
   $('#capture').addEventListener('click', openCapture);
   $('#dlgClose').addEventListener('click', function () { dlg.close(); });
 
-  function row(t, k, v) { var tr = el('tr'); tr.appendChild(el('td', k)); tr.appendChild(el('td', v)); t.appendChild(tr); }
+  function row(t, k, v) { var tr = el('tr'); tr.appendChild(el('td', k)); tr.appendChild(el('td', v)); return t.appendChild(tr); }
   function buildSheet() {
     var s = $('#sheet'), vals = state[mode].form, t;
     s.innerHTML = '';
     s.appendChild(el('h1', 'Datenaufnahme Versicherungsangebot – ' + (mode === 'praxis' ? 'Praxis' : 'Privat')));
     s.appendChild(el('div', 'Stand ' + new Date().toLocaleDateString('de-DE') + ' · Sebastian Klinder · Finanz- & Niederlassungsberatung · HORBACH'));
     FORM[mode].forEach(function (g) {
+      if (g[2] && !vals[g[2].key]) return; // nicht angewählter Bereich kommt nicht aufs Blatt
       s.appendChild(el('h2', g[0]));
       t = s.appendChild(el('table'));
-      g[1].forEach(function (f) { row(t, f[0], vals[f[0]] || '–'); });
+      if (g[2]) row(t, 'Hinweis', g[2].hint);
+      g[1].forEach(function (f) {
+        if (f[1] === 'sub') { row(t, f[0], '').className = 'sub'; return; }
+        var v = vals[f[0]];
+        row(t, f[0], !v ? '–' : f[0].indexOf('(€)') > -1 ? eur(v) : v);
+      });
     });
     s.appendChild(el('h2', 'Versicherungsschirm'));
     t = s.appendChild(el('table'));
