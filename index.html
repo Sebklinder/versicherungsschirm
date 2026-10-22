@@ -333,10 +333,10 @@ legend{float:left;width:100%;padding:0;margin-bottom:12px;font-size:13px;font-we
 </div>
 </div>
 
-<section aria-label="Versicherungsbausteine" style="padding:0 56px">
+<section aria-label="Versicherungsbausteine" style="padding:18px 56px 0">
 <div class="grid4" id="core"></div>
 <div class="grid4" id="extra" style="margin-top:24px;padding-top:20px;border-top:1.5px solid #eeeae4">
-<div style="display:flex;flex-direction:column;justify-content:center;gap:2px">
+<div style="display:flex;flex-direction:column;justify-content:center;gap:2px;grid-column:1/-1">
 <span style="font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#697d0f">Optionale Zusätze</span></div>
 </div>
 </section>
@@ -402,12 +402,12 @@ legend{float:left;width:100%;padding:0;margin-bottom:12px;font-size:13px;font-we
   var MODES = {
     praxis: {
       items: PRAXIS_ITEMS,
-      addons: [['Gebäude', 'Nur bei eigenem Praxisobjekt'], ['bAV', 'Betriebliche Altersversorgung'], ['bKV', 'Betriebliche Krankenversicherung']],
+      addons: [['Gebäude', 'Nur bei eigenem Praxisobjekt'], ['bAV', 'Betriebliche Altersversorgung'], ['bKV', 'Betriebliche Krankenversicherung'], ['Kfz', 'Praxisfahrzeuge & Firmenwagen']],
       eyebrow: 'Betriebliche Absicherung der Arztpraxis',
       title: 'Der Versicherungsschirm Ihrer Praxis',
       lead: 'Jede Absicherung schließt ein Stück des Schirms. Wo eine Lücke bleibt, regnet das Risiko direkt auf Ihre Praxis.',
       aria: 'Arztpraxis unter einem Regenschirm; ungeschützte Segmente sind eingerissen',
-      foot: '* Bezieht sich auf die 8 Bausteine des Schirms. Gebäude, bAV und bKV sind optionale Zusätze.',
+      foot: '* Bezieht sich auf die 8 Bausteine des Schirms. Gebäude, bAV, bKV und Kfz sind optionale Zusätze.',
       nameKey: 'Praxisname', titleFor: 'Der Versicherungsschirm für '
     },
     privat: {
@@ -456,6 +456,8 @@ legend{float:left;width:100%;padding:0;margin-bottom:12px;font-size:13px;font-we
       'Reparatur oder Wiederaufbau zum gleitenden Neuwert nach Feuer, Leitungswasser und Sturm/Hagel, optional Elementarschäden, inklusive Mietausfall.'],
     'bAV': ['Fachkräfte sind knapp: Eine betriebliche Altersversorgung bindet MFA an die Praxis. Auf Entgeltumwandlung haben Mitarbeiter ohnehin einen Rechtsanspruch.',
       'Steuer- und sozialabgabenbegünstigte Altersvorsorge für Mitarbeiter, ergänzt um den Arbeitgeberzuschuss.'],
+    'Kfz': ['Ob Hausbesuche oder Firmenwagen: Ohne Fahrzeug stocken Termine. Die Kfz-Haftpflicht ist gesetzlich vorgeschrieben, Schäden am eigenen Wagen trägt sonst die Praxis.',
+      'Kfz-Haftpflicht für Schäden an Dritten sowie Teil- oder Vollkasko für Schäden am eigenen Fahrzeug; mehrere Fahrzeuge auch gebündelt als Flottenvertrag.'],
     'bKV': ['Ein Mitarbeiter-Benefit, der im Alltag spürbar ist – stärkt Bindung und Arbeitgeberattraktivität bei überschaubaren Kosten.',
       'Arbeitgeberfinanzierte Gesundheitsleistungen für Mitarbeiter, z. B. Zahnersatz, Vorsorge, Brille oder ein jährliches Gesundheitsbudget.'],
     'Risikoleben': ['Praxis- und Immobilienkredite laufen weiter, auch wenn Sie nicht mehr da sind. Die Familie soll weder Praxis noch Haus verkaufen müssen.',
@@ -480,7 +482,7 @@ legend{float:left;width:100%;padding:0;margin-bottom:12px;font-size:13px;font-we
   // Stand je Ansicht merken, damit der Wechsel nichts verliert
   function freshState() {
     return {
-      praxis: { covered: new Array(N).fill(0), addons: [false, false, false], form: {}, info: {}, sign: [] },
+      praxis: { covered: new Array(N).fill(0), addons: [false, false, false, false], form: {}, info: {}, sign: [] },
       privat: { covered: new Array(MODES.privat.items.length).fill(0), addons: [], form: {}, info: {}, sign: [] }
     };
   }
@@ -655,7 +657,8 @@ legend{float:left;width:100%;padding:0;margin-bottom:12px;font-size:13px;font-we
       coreChips[i].classList.toggle('chk', covered[i] === 2);
       coreChips[i].classList.toggle('req', covered[i] === 3);
       coreChips[i].setAttribute('aria-pressed', ['false', 'true', 'mixed', 'false'][covered[i]]);
-      coreChips[i].querySelector('.pill').textContent = STATUS[covered[i]];
+      // kurze Plakette, damit sie nicht in "Betriebsunterbrechung x/3" läuft; im Dokument bleibt "Angebot anfordern"
+      coreChips[i].querySelector('.pill').textContent = covered[i] === 3 ? 'Angebot' : STATUS[covered[i]];
     }
     addonChips.forEach(function (b, i) {
       b.classList.toggle('on', addons[i]);
