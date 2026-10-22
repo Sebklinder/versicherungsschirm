@@ -8,7 +8,9 @@ self.addEventListener('install', function (e) {
 self.addEventListener('activate', function (e) { e.waitUntil(self.clients.claim()); });
 self.addEventListener('fetch', function (e) {
   if (e.request.method !== 'GET') return;
-  e.respondWith(fetch(e.request).then(function (r) {
+  // Seite selbst immer beim Server nachfragen, sonst liefert der Browser-Cache bis zu 10 Min. die alte Version
+  var req = e.request.mode === 'navigate' ? new Request(e.request.url, { cache: 'no-cache' }) : e.request;
+  e.respondWith(fetch(req).then(function (r) {
     var copy = r.clone();
     caches.open(CACHE).then(function (c) { c.put(e.request, copy); });
     return r;
