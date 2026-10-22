@@ -48,24 +48,36 @@ body{margin:0;background:#f4f1ec;font-family:Assistant,sans-serif;color:#2b2723}
 .seg button{flex:1;min-height:48px;border:0;border-radius:8px;background:transparent;font:700 15px Assistant,sans-serif;color:#5d554c;cursor:pointer}
 .seg button[aria-pressed="true"]{background:#fff;color:#2b2723;box-shadow:0 1px 2px rgba(0,0,0,.12)}
 .seg button:focus-visible{outline:3px solid #006e96;outline-offset:2px}
-dialog{width:min(880px,94vw);max-height:92vh;border:0;border-radius:14px;padding:0;font-family:Assistant,sans-serif;color:#2b2723}
+dialog{width:min(900px,94vw);max-height:92vh;border:0;border-radius:16px;padding:0;font-family:Assistant,sans-serif;color:#2b2723;background:#f4f1ec}
 dialog::backdrop{background:rgba(43,39,35,.5)}
-.dlg-h{padding:22px 24px 6px}.dlg-h h2{margin:0;font-size:24px;font-weight:800}.dlg-h p{margin:4px 0 0;font-size:14px;color:#5d554c}
-.dlg-b{padding:12px 24px;overflow:auto;max-height:calc(92vh - 170px)}
-.dlg-f{padding:14px 24px;display:flex;justify-content:flex-end;gap:10px;border-top:1.5px solid #eeeae4}
-fieldset{border:0;margin:0 0 18px;padding:0}
-legend{padding:0;margin-bottom:10px;font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#697d0f}
-.fgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
-.fgrid label{display:flex;flex-direction:column;justify-content:flex-end;gap:4px;font-size:13px;font-weight:600;color:#5d554c}
+.dlg-h{padding:22px 24px 16px;background:#fff;border-bottom:4px solid #b4c800}.dlg-h h2{margin:0;font-size:24px;font-weight:800}.dlg-h p{margin:4px 0 0;font-size:14px;color:#5d554c}
+.dlg-b{padding:18px 24px 4px;overflow:auto;max-height:calc(92vh - 190px)}
+.dlg-f{padding:14px 24px;display:flex;justify-content:flex-end;gap:10px;background:#fff;border-top:1.5px solid #e3ded7}
+/* Jede Gruppe als Kachel wie auf der Hauptseite */
+fieldset{margin:0 0 16px;padding:16px 18px 18px;border:1.5px solid #e3ded7;border-radius:12px;background:#fff}
+legend{float:left;width:100%;padding:0;margin-bottom:12px;font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#697d0f}
+.fgrid{clear:both;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.fgrid label,.fgrid .field{display:flex;flex-direction:column;justify-content:flex-end;gap:4px;font-size:13px;font-weight:600;color:#5d554c}
 .fgrid .wide{grid-column:1/-1}
-.fgrid input,.fgrid select,.fgrid textarea{font:400 15px Assistant,sans-serif;color:#2b2723;min-height:40px;padding:8px 10px;border:1.5px solid #cfc8bf;border-radius:8px;background:#fff}
+.fgrid input,.fgrid select,.fgrid textarea{font:400 15px Assistant,sans-serif;color:#2b2723;min-height:44px;padding:8px 10px;border:1.5px solid #cfc8bf;border-radius:8px;background:#faf8f5}
+.fgrid input:focus,.fgrid textarea:focus{background:#fff;border-color:#827869}
 .fgrid input:focus-visible,.fgrid select:focus-visible,.fgrid textarea:focus-visible{outline:3px solid #006e96;outline-offset:1px}
 [hidden]{display:none!important}
-.toggle{display:flex;align-items:center;gap:10px;min-height:44px;font-size:15px;font-weight:700;cursor:pointer}
+/* Auswahlfelder als Kacheln */
+.tiles{display:flex;flex-wrap:wrap;gap:8px}
+.fgrid .tile{position:relative;flex:1 1 0;min-width:max-content;flex-direction:row;align-items:center;justify-content:center;min-height:44px;padding:8px 14px;border:1.5px solid #e3ded7;border-radius:10px;background:#fff;font-size:14px;font-weight:700;color:#2b2723;cursor:pointer;transition:border-color .3s,background-color .3s}
+.fgrid .tile:hover{border-color:#827869}
+.tile input{position:absolute;opacity:0;pointer-events:none}
+.fgrid .tile:has(input:checked){border-color:#697d0f;background:#f6f8e6;color:#3f4a09}
+.tile:has(input:focus-visible){outline:3px solid #006e96;outline-offset:2px}
+.toggle{clear:both;position:relative;display:flex;align-items:center;gap:12px;min-height:56px;padding:12px 16px;border:1.5px dashed #cfc8bf;border-radius:12px;font-size:16px;font-weight:700;cursor:pointer;transition:border-color .3s,background-color .3s}
+.toggle:hover{border-color:#827869}
+.toggle:has(input:checked){border-style:solid;border-color:#006e96;background:#e9f2f6;margin-bottom:14px}
 .toggle input{width:22px;height:22px;accent-color:#006e96}
-.fgrid .sub{grid-column:1/-1;margin-top:6px;padding-bottom:4px;border-bottom:1.5px solid #eeeae4;font-size:14px;font-weight:700;color:#2b2723}
+.fgrid .sub{grid-column:1/-1;margin-top:8px;padding:8px 12px;border-radius:8px;background:#f4f1ec;font-size:14px;font-weight:700;color:#2b2723}
 .fgrid .hint{grid-column:1/-1;margin:0;padding:10px 12px;border-radius:8px;border:1.5px solid #ecbd00;background:#fdf6d8;font-size:14px;line-height:1.4;color:#2b2723}
-.fgrid input.sum{background:#f4f1ec;font-weight:700}
+.fgrid input.sum{background:#f6f8e6;border-color:#d6dda6;font-weight:700;color:#3f4a09}
+@media (prefers-reduced-motion:reduce){.fgrid .tile,.toggle{transition:none}}
 #sheet{display:none}
 @page{margin:16mm}
 @media print{
@@ -217,14 +229,31 @@ legend{padding:0;margin-bottom:10px;font-size:13px;font-weight:700;letter-spacin
 <text x="648" y="560" text-anchor="middle" style="font: 700 10px Assistant, sans-serif; letter-spacing: 0.16em" fill="#ffffff">ARZTPRAXIS</text>
 </g>
 
-<!-- Männchen hält den Schirmgriff -->
-<g id="homeBld" style="display:none" fill="#006e96" stroke="#006e96" stroke-linecap="round">
-<line x1="642" y1="540" x2="629" y2="466" stroke-width="16"></line>
-<line x1="700" y1="540" x2="716" y2="598" stroke-width="16"></line>
-<circle cx="668" cy="494" r="24" stroke="none"></circle>
-<rect x="630" y="526" width="76" height="66" rx="20" stroke="none"></rect>
-<rect x="638" y="572" width="26" height="74" rx="10" stroke="none"></rect>
-<rect x="672" y="572" width="26" height="74" rx="10" stroke="none"></rect>
+<!-- Arzt im Kittel mit Stethoskop, hält den Schirmgriff -->
+<g id="homeBld" style="display:none" stroke-linecap="round" stroke-linejoin="round">
+<rect x="645" y="588" width="19" height="54" rx="4" fill="#3d3832"></rect>
+<rect x="672" y="588" width="19" height="54" rx="4" fill="#3d3832"></rect>
+<rect x="640" y="638" width="26" height="9" rx="4.5" fill="#2b2723"></rect>
+<rect x="670" y="638" width="26" height="9" rx="4.5" fill="#2b2723"></rect>
+<rect x="661" y="500" width="14" height="22" rx="4" fill="#e3bfa1"></rect>
+<line x1="648" y1="528" x2="628" y2="472" stroke="#827869" stroke-width="17"></line>
+<line x1="648" y1="528" x2="628" y2="472" stroke="#ffffff" stroke-width="13"></line>
+<path d="M644 524 Q668 512 692 524 L702 612 L634 612 Z" fill="#ffffff" stroke="#827869" stroke-width="1.6"></path>
+<polygon points="659,519 677,519 668,542" fill="#cfe2ea"></polygon>
+<polygon points="666,523 670,523 671.5,540 668,545 664.5,540" fill="#006e96"></polygon>
+<polyline points="657,520 664,550 668,612" fill="none" stroke="#827869" stroke-width="1.4"></polyline>
+<polyline points="679,520 672,550" fill="none" stroke="#827869" stroke-width="1.4"></polyline>
+<rect x="678" y="558" width="14" height="10" rx="1.5" fill="none" stroke="#827869" stroke-width="1.2"></rect>
+<line x1="682" y1="561" x2="682" y2="553" stroke="#006e96" stroke-width="2"></line>
+<path d="M655 522 C648 548 658 562 668 568 C678 562 688 548 681 522" fill="none" stroke="#4a443d" stroke-width="2.4"></path>
+<line x1="668" y1="568" x2="668" y2="580" stroke="#4a443d" stroke-width="2.4"></line>
+<circle cx="668" cy="584" r="5" fill="#827869" stroke="#4a443d" stroke-width="1.6"></circle>
+<line x1="690" y1="528" x2="702" y2="590" stroke="#827869" stroke-width="17"></line>
+<line x1="690" y1="528" x2="702" y2="590" stroke="#ffffff" stroke-width="13"></line>
+<circle cx="703" cy="597" r="6.5" fill="#e3bfa1"></circle>
+<circle cx="627" cy="466" r="7" fill="#e3bfa1"></circle>
+<circle cx="668" cy="490" r="18" fill="#e3bfa1"></circle>
+<path d="M650 492 C647 470 659 465 668 465 C680 465 690 471 686 492 C683 482 676 478 668 478 C659 478 653 483 650 492 Z" fill="#4a443d"></path>
 </g>
 </svg>
 <div id="rain" aria-hidden="true" style="position:absolute;left:0;top:0;width:1280px;height:680px;pointer-events:none"></div>
@@ -452,9 +481,9 @@ legend{padding:0;margin-bottom:10px;font-size:13px;font-weight:700;letter-spacin
     });
     drops.forEach(function (o) {
       var d = o.d, open = d[0] < 0 || !covered[d[0]];
-      // Privat: Tropfen treffen Kopf (±24) oder Schultern (±38) des Männchens, sonst den Boden
+      // Privat: Tropfen treffen Kopf (±18) oder Schultern (±34) des Arztes, sonst den Boden
       var dx = Math.abs(d[1] - 668);
-      var floor = mode === 'privat' && d[3] === 462 ? (dx < 24 ? 472 : dx < 38 ? 526 : 646) : d[3];
+      var floor = mode === 'privat' && d[3] === 462 ? (dx < 18 ? 468 : dx < 34 ? 520 : 646) : d[3];
       o.lane.style.height = (open ? floor : d[2]) + 'px';
       o.drop.classList.toggle('leak', d[0] >= 0 && open);
     });
@@ -494,14 +523,23 @@ legend{padding:0;margin-bottom:10px;font-size:13px;font-weight:700;letter-spacin
       }
       g[1].forEach(function (f) {
         if (f[1] === 'sub') { grid.appendChild(el('div', f[0], 'sub')); return; }
+        if (f[1] === 'select') { // Auswahl als antippbare Kacheln statt Dropdown
+          var fd = el('div', null, 'field' + (f[2].length > 2 ? ' wide' : '')), tiles = el('div', null, 'tiles');
+          fd.appendChild(el('span', f[0]));
+          tiles.setAttribute('role', 'radiogroup'); tiles.setAttribute('aria-label', f[0]);
+          f[2].forEach(function (o) {
+            var tl = el('label', null, 'tile'), r = el('input');
+            r.type = 'radio'; r.name = f[0]; r.value = o; r.checked = vals[f[0]] === o;
+            tl.appendChild(r); tl.appendChild(document.createTextNode(o));
+            tiles.appendChild(tl);
+          });
+          fd.appendChild(tiles); grid.appendChild(fd);
+          return;
+        }
         var l = el('label', f[0], f[1] === 'textarea' ? 'wide' : ''), input;
         if (f[1] === 'sum') {
           input = el('input', null, 'sum'); input.readOnly = true; input.tabIndex = -1;
           sumFields.push({ input: input, f: f });
-        } else if (f[1] === 'select') {
-          input = el('select');
-          input.appendChild(el('option', 'Bitte wählen')).value = '';
-          f[2].forEach(function (o) { input.appendChild(el('option', o)); });
         } else if (f[1] === 'textarea') {
           input = el('textarea'); input.rows = 3;
         } else {
