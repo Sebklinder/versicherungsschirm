@@ -52,7 +52,7 @@ body{margin:0;background:#f4f1ec;font-family:Assistant,sans-serif;color:#2b2723}
 .grid4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
 #badge{display:none}
 .seg{display:flex;gap:4px;padding:4px;border-radius:10px;background:#eeeae4}
-.seg button{flex:1;min-height:48px;border:0;border-radius:8px;background:transparent;font:700 15px Assistant,sans-serif;color:#5d554c;cursor:pointer}
+.seg button{flex:1;white-space:nowrap;padding:0 10px;min-height:48px;border:0;border-radius:8px;background:transparent;font:700 15px Assistant,sans-serif;color:#5d554c;cursor:pointer}
 .seg button[aria-pressed="true"]{background:#fff;color:#2b2723;box-shadow:0 1px 2px rgba(0,0,0,.12)}
 .seg button:focus-visible{outline:3px solid #006e96;outline-offset:2px}
 dialog{width:min(900px,94vw);max-height:92vh;border:0;border-radius:16px;padding:0;font-family:Assistant,sans-serif;color:#2b2723;background:#f4f1ec}
@@ -139,10 +139,13 @@ legend{float:left;width:100%;padding:0;margin-bottom:12px;font-size:13px;font-we
 <h1 id="title" style="margin:0;font-size:36px;line-height:1.08;font-weight:800"></h1>
 <p id="lead" style="margin:0;font-size:18px;line-height:1.45;color:#5d554c"></p>
 </div>
-<div style="flex:none;width:400px;display:flex;flex-direction:column;gap:12px;padding:18px 20px;border:1.5px solid #e3ded7;border-radius:14px">
-<div class="seg" role="group" aria-label="Ansicht">
+<div style="flex:none;width:500px;display:flex;flex-direction:column;gap:12px;padding:18px 20px;border:1.5px solid #e3ded7;border-radius:14px">
+<div style="display:flex;gap:10px">
+<div class="seg" role="group" aria-label="Ansicht" style="flex:1">
 <button type="button" data-mode="praxis">Praxis</button>
 <button type="button" data-mode="privat">+ Privater Rahmen</button>
+</div>
+<button type="button" class="btn ghost" id="reset" style="min-height:56px">Neues Gespräch</button>
 </div>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
 <button type="button" class="btn ghost" id="capture" style="justify-content:center">Daten aufnehmen</button>
@@ -330,8 +333,7 @@ legend{float:left;width:100%;padding:0;margin-bottom:12px;font-size:13px;font-we
 
 <footer style="padding:16px 56px;display:flex;justify-content:space-between;align-items:center;gap:24px;font-size:14px;color:#5d554c">
 <span><span id="foot"></span><br><span id="disc"></span></span>
-<span style="display:flex;align-items:center;gap:16px;flex:none">Sebastian Klinder · Finanz- &amp; Niederlassungsberatung · HORBACH
-<button type="button" class="btn ghost" id="reset">Neues Gespräch</button></span>
+<span style="flex:none">Sebastian Klinder · Finanz- &amp; Niederlassungsberatung · HORBACH</span>
 </footer>
 </div>
 
