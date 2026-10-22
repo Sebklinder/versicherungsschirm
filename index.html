@@ -39,6 +39,12 @@ body{margin:0;background:#f4f1ec;font-family:Assistant,sans-serif;color:#2b2723}
 .chip.addon{border-style:dashed}.chip.addon .pill{color:#5d554c;background:#eeeae4}
 .chip.addon.on{border-style:solid;border-color:#006e96;background:#e9f2f6}
 .chip.addon.on .num,.chip.addon.on .pill{background:#006e96;color:#fff}
+/* Info-Knopf sitzt neben (nicht in) der Kachel, weil Buttons nicht verschachtelt werden dürfen */
+.cell{position:relative;display:flex}.cell>.chip{flex:1;padding-right:48px}
+.info{position:absolute;right:10px;bottom:10px;width:32px;height:32px;border-radius:50%;border:1.5px solid #cfc8bf;background:#fff;color:#5d554c;font:italic 700 16px Georgia,serif;cursor:pointer}
+.info:hover{border-color:#827869;color:#2b2723}.info:focus-visible{outline:3px solid #006e96;outline-offset:2px}
+#infoDlg{width:min(560px,94vw)}#infoDlg .dlg-b{background:#fff;border-top:0}#infoDlg h3{margin:0 0 4px;font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#697d0f}
+#infoDlg p{margin:0 0 16px;font-size:16px;line-height:1.5}
 .btn{white-space:nowrap;display:inline-flex;align-items:center;gap:8px;min-height:52px;padding:0 18px;border-radius:10px;font:700 15px Assistant,sans-serif;cursor:pointer}
 .btn.primary{background:#006e96;color:#fff;border:none}.btn.primary:hover{background:#005a7b}
 .btn.ghost{background:#fff;color:#2b2723;border:1.5px solid #cfc8bf}.btn.ghost:hover{border-color:#827869}
@@ -315,6 +321,11 @@ legend{float:left;width:100%;padding:0;margin-bottom:12px;font-size:13px;font-we
 <button type="button" class="btn primary" id="dlgPrint">Datenblatt drucken / als PDF</button>
 </div>
 </dialog>
+<dialog id="infoDlg" aria-labelledby="infoTitle">
+<div class="dlg-h"><h2 id="infoTitle"></h2><p id="infoRisk"></p></div>
+<div class="dlg-b"><h3>Warum wichtig</h3><p id="infoWhy"></p><h3>Kernleistung</h3><p id="infoCore"></p></div>
+<div class="dlg-f"><button type="button" class="btn ghost" id="infoClose">Schließen</button></div>
+</dialog>
 <div id="sheet"></div>
 
 <script>
@@ -359,6 +370,43 @@ legend{float:left;width:100%;padding:0;margin-bottom:12px;font-size:13px;font-we
       aria: 'Person unter einem Regenschirm; ungeschützte Segmente sind eingerissen',
       foot: '* Bezieht sich auf die 6 Bausteine des privaten Schirms.'
     }
+  };
+  // Info-Texte je Baustein (Schlüssel = Kacheltitel): [Warum wichtig, Kernleistung]
+  var INFO = {
+    'Berufshaftpflicht': ['Ein einziger Behandlungsfehler kann Schadenersatz- und Schmerzensgeldforderungen in Millionenhöhe auslösen, etwa bei bleibenden Gesundheitsschäden. Für Vertragsärzte ist eine ausreichende Berufshaftpflicht zudem gesetzlich vorgeschrieben (§ 95e SGB V, mindestens 3 Mio. € je Versicherungsfall).',
+      'Prüft Ansprüche, wehrt unberechtigte Forderungen ab und zahlt berechtigte Personen-, Sach- und Vermögensschäden aus der ärztlichen Tätigkeit – auch für angestellte Ärzte und Praxisteam.'],
+    'Praxisinhalt & Glas': ['In Einrichtung, Instrumenten, Vorräten und Glasflächen steckt schnell ein sechsstelliger Betrag. Nach Feuer, Einbruch oder Leitungswasser muss die Praxis rasch wieder arbeitsfähig sein.',
+      'Ersetzt beschädigte oder gestohlene Praxiseinrichtung, Vorräte und Verglasung zum Neuwert, inklusive Aufräum- und Wiederherstellungskosten.'],
+    'Elektronik & Medizintechnik': ['Ultraschall, Röntgen, Labor- und IT-Geräte sind teuer und fallen häufig durch Bedienfehler, Überspannung oder technischen Defekt aus – Ursachen, die die Inhaltsversicherung nicht abdeckt.',
+      'Allgefahrendeckung für Geräte: Reparatur oder Neuwert bei nahezu jeder unvorhergesehenen Beschädigung, z. B. Sturz, Flüssigkeit, Kurzschluss oder Bedienfehler.'],
+    'Cyberversicherung': ['Praxen verarbeiten hochsensible Patientendaten und hängen an der Telematikinfrastruktur. Ein Hackerangriff legt den Betrieb lahm und zieht DSGVO-Meldepflichten sowie Ansprüche von Patienten nach sich.',
+      'Rund-um-die-Uhr-Krisenhilfe durch IT-Forensiker, Datenwiederherstellung, Kosten für Rechtsberatung und Benachrichtigung sowie Ansprüche Dritter nach Datenschutzverletzungen.'],
+    'Praxis-Rechtsschutz': ['Streit mit Mitarbeitern, Vermieter oder Lieferanten und Ermittlungsverfahren, etwa wegen fahrlässiger Körperverletzung, entstehen schnell. Die Kosten bis zur Klärung trägt sonst die Praxis selbst.',
+      'Übernimmt Anwalts-, Gerichts- und Gutachterkosten, z. B. im Arbeits-, Vertrags- und Straf-Rechtsschutz.'],
+    'Sachschaden': ['Nach Brand oder Wasserschaden steht die Praxis oft wochenlang still, während Miete, Gehälter und Kreditraten weiterlaufen.',
+      'Ersetzt entgangenen Gewinn und fortlaufende Kosten, bis die Praxis nach einem versicherten Schaden an Inhalt oder Elektronik wieder normal arbeitet.'],
+    'Cyber': ['Nach einem Cyberangriff sind Praxissoftware und Terminplanung oft tagelang nicht nutzbar – Patienten müssen abgesagt werden, die Kosten bleiben.',
+      'Ersetzt Umsatzausfall und laufende Kosten während der Unterbrechung durch einen Hackerangriff.'],
+    'Praxisausfall': ['Die Praxis hängt an Ihrer Person: Fallen Sie durch Krankheit, Unfall oder Quarantäne aus, bleiben die Einnahmen weg – die Fixkosten nicht.',
+      'Erstattet die fortlaufenden Praxiskosten wie Personal, Miete, Leasing und Zinsen, auf Wunsch auch den Gewinn, solange Sie ausfallen.'],
+    'Gebäude': ['Bei eigenem Praxisobjekt ist die Immobilie meist der größte Vermögenswert. Die finanzierende Bank verlangt die Absicherung in der Regel.',
+      'Reparatur oder Wiederaufbau zum gleitenden Neuwert nach Feuer, Leitungswasser und Sturm/Hagel, optional Elementarschäden, inklusive Mietausfall.'],
+    'bAV': ['Fachkräfte sind knapp: Eine betriebliche Altersversorgung bindet MFA an die Praxis. Auf Entgeltumwandlung haben Mitarbeiter ohnehin einen Rechtsanspruch.',
+      'Steuer- und sozialabgabenbegünstigte Altersvorsorge für Mitarbeiter, ergänzt um den Arbeitgeberzuschuss.'],
+    'bKV': ['Ein Mitarbeiter-Benefit, der im Alltag spürbar ist – stärkt Bindung und Arbeitgeberattraktivität bei überschaubaren Kosten.',
+      'Arbeitgeberfinanzierte Gesundheitsleistungen für Mitarbeiter, z. B. Zahnersatz, Vorsorge, Brille oder ein jährliches Gesundheitsbudget.'],
+    'Risikoleben': ['Praxis- und Immobilienkredite laufen weiter, auch wenn Sie nicht mehr da sind. Die Familie soll weder Praxis noch Haus verkaufen müssen.',
+      'Zahlt im Todesfall die vereinbarte Summe an Hinterbliebene oder Bank – günstig, weil reiner Todesfallschutz.'],
+    'Privathaftpflicht': ['Wer einem anderen schadet, haftet unbegrenzt mit dem gesamten Vermögen. Schon ein Fahrradunfall mit Personenschaden kann existenzbedrohend werden.',
+      'Zahlt berechtigte Ansprüche und wehrt unberechtigte ab – für Sie und Ihre Familie im privaten Alltag.'],
+    'Berufsunfähigkeit': ['Ihre Arbeitskraft ist Ihr größtes Kapital. Das Versorgungswerk zahlt in der Regel nur bei vollständiger Berufsunfähigkeit, also wenn Sie gar nicht mehr ärztlich tätig sein können.',
+      'Zahlt eine monatliche Rente, sobald Sie Ihren Beruf zu mindestens 50 % nicht mehr ausüben können – bezogen auf Ihre konkrete ärztliche Tätigkeit.'],
+    'Krankenversicherung': ['Die Entscheidung zwischen GKV und PKV wirkt über Jahrzehnte und prägt Beitrag, Leistung und Familienabsicherung.',
+      'Übernimmt die Kosten für ambulante, stationäre und zahnärztliche Behandlung – Umfang je nach Tarif.'],
+    'Altersvorsorge': ['Das Versorgungswerk sichert eine Grundversorgung, die den gewohnten Lebensstandard meist nicht hält. Auf den Praxisverkaufserlös als Rente ist kein Verlass.',
+      'Baut zusätzliches Vermögen für den Ruhestand auf, z. B. steuerlich gefördert über die Basisrente oder flexibel über Fonds.'],
+    'Krankentagegeld': ['Als Selbstständige erhalten Sie keine Lohnfortzahlung. Schon nach wenigen Wochen Krankheit fehlt das Einkommen für Lebenshaltung und Verpflichtungen.',
+      'Zahlt ab einem vereinbarten Tag ein festes Tagegeld für jeden Tag der Arbeitsunfähigkeit.']
   };
   var mode = 'praxis', M = MODES[mode];
   var N = 8; // Schirmsegmente
@@ -461,20 +509,35 @@ legend{float:left;width:100%;padding:0;margin-bottom:12px;font-size:13px;font-we
     if (grp) { var g = document.createElement('span'); g.className = 'grp'; g.textContent = grp; b.appendChild(g); }
     return b;
   }
+  // Kachel + Info-Knopf als Geschwister in einer Zelle
+  function cell(b, it) {
+    var c = el('div', null, 'cell'), i = el('button', 'i', 'info');
+    i.type = 'button';
+    i.setAttribute('aria-label', 'Info: ' + it[0]);
+    i.addEventListener('click', function () {
+      $('#infoTitle').textContent = it[2] ? 'Betriebsunterbrechung – ' + it[0] : it[0];
+      $('#infoRisk').textContent = it[1];
+      $('#infoWhy').textContent = INFO[it[0]][0];
+      $('#infoCore').textContent = INFO[it[0]][1];
+      $('#infoDlg').showModal();
+    });
+    c.appendChild(b); c.appendChild(i);
+    return c;
+  }
   var coreChips = [], addonChips = [];
   function setMode(m) {
     mode = m; M = MODES[m]; covered = state[m].covered; addons = state[m].addons;
-    coreChips.concat(addonChips).forEach(function (b) { b.remove(); });
+    coreChips.concat(addonChips).forEach(function (b) { b.parentNode.remove(); });
     coreChips = M.items.map(function (it, idx) {
       var b = chip(idx + 1, it[0], it[1], '', it[2]);
       b.addEventListener('click', function () { covered[idx] = !covered[idx]; render(); });
-      $('#core').appendChild(b);
+      $('#core').appendChild(cell(b, it));
       return b;
     });
     addonChips = M.addons.map(function (it, idx) {
       var b = chip('+', it[0], it[1], ' addon');
       b.addEventListener('click', function () { addons[idx] = !addons[idx]; render(); });
-      $('#extra').appendChild(b);
+      $('#extra').appendChild(cell(b, it));
       return b;
     });
     ['eyebrow', 'title', 'lead', 'foot'].forEach(function (k) { $('#' + k).textContent = M[k]; });
@@ -617,6 +680,7 @@ legend{float:left;width:100%;padding:0;margin-bottom:12px;font-size:13px;font-we
   capForm.addEventListener('change', onInput); // ältere iPad-Safari melden Checkboxen nur per change
   $('#capture').addEventListener('click', openCapture);
   $('#dlgClose').addEventListener('click', function () { dlg.close(); });
+  $('#infoClose').addEventListener('click', function () { $('#infoDlg').close(); });
 
   function row(t, k, v) { var tr = el('tr'); tr.appendChild(el('td', k)); tr.appendChild(el('td', v)); return t.appendChild(tr); }
   function buildSheet() {
