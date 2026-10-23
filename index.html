@@ -589,20 +589,27 @@ legend{float:left;width:100%;padding:0;margin-bottom:12px;font-size:13px;font-we
     ['BU Monatliches Netto (€)', 'number', null, 'Monatliches Netto (€)'],
     ['Gewünschter Versicherungsschutz', 'sub'],
     ['BU Tarif / Endalter', 'text', null, 'Tarif / Endalter'], ['BU Todesfallkapital (€)', 'number', null, 'Todesfallkapital (€)'],
-    ['BU Versicherungsbeginn', 'date', null, 'Versicherungsbeginn'],
-    ['Körperdaten', 'sub'],
-    ['BU Körpergröße', 'number', null, 'Körpergröße (cm)'], ['BU Körpergewicht', 'number', null, 'Körpergewicht (kg)'],
-    ['BU Motorradfahrer', 'select', JN, 'Motorradfahrer']
+    ['BU Versicherungsbeginn', 'date', null, 'Versicherungsbeginn']
   ];
-  BU_Q.forEach(function (q) {
-    if (q.length === 1) { buFields.push([q[0], 'sub']); return; }
-    buFields.push(['BU Frage ' + q[0], 'select', JN, q[0] + '. ' + q[1]]);
-    if (q[0] === '19') buFields.push(['BU GdB/MdE/WDB', 'text', null, 'Art (GdB, MdE, WDB) und Prozent']);
-    if (q[0] === '20') buFields.push(['BU Dioptrien rechts', 'text', null, 'Dioptrien rechts'], ['BU Dioptrien links', 'text', null, 'Dioptrien links']);
-    if (q[0] === '28') buFields.push(['BU Hausarzt', 'textarea', null, 'Hausarzt: Name, Anschrift, Fachrichtung']);
-  });
-  buFields.push(['Ergänzende Angaben zu den mit „Ja“ beantworteten Fragen', 'sub'],
-    ['BU Ergänzende Angaben', 'textarea', null, 'Je Frage-Nr.: Diagnose/Beschwerden/OP/Medikament, ambulant von–bis, stationär von–bis, arbeitsunfähig von–bis, beschwerdefrei seit, Behandler (Name, Anschrift)']);
+  // Körperdaten, Fragen und Ergänzungen; Praxisausfall nutzt nur die Gesundheitsfragen ab Teil C
+  function healthFields(qs) {
+    var f = [['Körperdaten', 'sub'],
+      ['BU Körpergröße', 'number', null, 'Körpergröße (cm)'], ['BU Körpergewicht', 'number', null, 'Körpergewicht (kg)'],
+      ['BU Motorradfahrer', 'select', JN, 'Motorradfahrer']];
+    qs.forEach(function (q) {
+      if (q.length === 1) { f.push([q[0], 'sub']); return; }
+      f.push(['BU Frage ' + q[0], 'select', JN, q[0] + '. ' + q[1]]);
+      if (q[0] === '19') f.push(['BU GdB/MdE/WDB', 'text', null, 'Art (GdB, MdE, WDB) und Prozent']);
+      if (q[0] === '20') f.push(['BU Dioptrien rechts', 'text', null, 'Dioptrien rechts'], ['BU Dioptrien links', 'text', null, 'Dioptrien links']);
+      if (q[0] === '28') f.push(['BU Hausarzt', 'textarea', null, 'Hausarzt: Name, Anschrift, Fachrichtung']);
+    });
+    return f.concat([['Ergänzende Angaben zu den mit „Ja“ beantworteten Fragen', 'sub'],
+      ['BU Ergänzende Angaben', 'textarea', null, 'Je Frage-Nr.: Diagnose/Beschwerden/OP/Medikament, ambulant von–bis, stationär von–bis, arbeitsunfähig von–bis, beschwerdefrei seit, Behandler (Name, Anschrift)']]);
+  }
+  buFields = buFields.concat(healthFields(BU_Q));
+  var paHealth = [['Person', 'sub'], ['GF Geburtsdatum', 'date', null, 'Geburtsdatum'],
+    ['GF Geschlecht', 'select', ['weiblich', 'männlich'], 'Geschlecht']]
+    .concat(healthFields(BU_Q.slice(BU_Q.findIndex(function (q) { return q[0] === 'C. Psyche, Sucht, Infektionen'; }))));
   var FORM = {
     praxis: [
       ['Beratung', [['Berater/in', 'text']]],
@@ -614,7 +621,12 @@ legend{float:left;width:100%;padding:0;margin-bottom:12px;font-size:13px;font-we
         ['Waren und Vorräte (€)', 'number'], ['Kühlgut (€)', 'number']]],
       ['Praxisausfallversicherung', paFields, {
         key: 'paOn', toggle: 'Praxisausfallversicherung aufnehmen',
-        hint: 'Hinweis: Für die Praxisausfallversicherung benötigen wir zusätzlich Angaben zur gesundheitlichen Situation (Gesundheitsfragen des Versicherers).'
+        hint: 'Hinweis: Für die Praxisausfallversicherung benötigen wir zusätzlich Angaben zur gesundheitlichen Situation (Gesundheitsfragen unten).'
+      }],
+      ['Gesundheitsfragen Praxisausfallversicherung', paHealth, {
+        key: 'paGf', toggle: 'Gesundheitsfragen zur Praxisausfallversicherung aufnehmen', sheet: true,
+        base: ['Inhaber/in', 'Fachrichtung', 'Niedergelassen seit'],
+        hint: 'Angaben zur versicherten Person (Praxisinhaber/in). Jede mit „Ja“ beantwortete Frage bitte unten unter „Ergänzende Angaben“ erläutern (Diagnose, Zeitraum ambulant/stationär, arbeitsunfähig, beschwerdefrei seit, Behandler).'
       }],
       ['Sonstiges', [['Weitere Verträge / Ablauf', 'textarea'], ['Bemerkungen', 'textarea']]]
     ],
