@@ -85,6 +85,8 @@ legend{float:left;width:100%;padding:0;margin-bottom:12px;font-size:13px;font-we
 .toggle input{width:22px;height:22px;accent-color:#006e96}
 .fgrid .sub{grid-column:1/-1;margin-top:8px;padding:8px 12px;border-radius:8px;background:#f4f1ec;font-size:14px;font-weight:700;color:#2b2723}
 .fgrid .hint{grid-column:1/-1;margin:0;padding:10px 12px;border-radius:8px;border:1.5px solid #ecbd00;background:#fdf6d8;font-size:14px;line-height:1.4;color:#2b2723}
+/* Unterfragen nach "Ja": eingerückt unter der Frage */
+.fgrid .dep{margin-left:14px;padding-left:12px;border-left:3px solid #b4c800}
 .fgrid input.sum{background:#f6f8e6;border-color:#d6dda6;font-weight:700;color:#3f4a09}
 @media (prefers-reduced-motion:reduce){.fgrid .tile,.toggle{transition:none}}
 #sheet{display:none}
@@ -592,13 +594,25 @@ legend{float:left;width:100%;padding:0;margin-bottom:12px;font-size:13px;font-we
     ['BU Versicherungsbeginn', 'date', null, 'Versicherungsbeginn']
   ];
   // Körperdaten, Fragen und Ergänzungen; Praxisausfall nutzt nur die Gesundheitsfragen ab Teil C
+  var DEP = {}; // Unterfrage -> Feld, das mit "Ja" beantwortet sein muss
   function healthFields(qs) {
     var f = [['Körperdaten', 'sub'],
       ['BU Körpergröße', 'number', null, 'Körpergröße (cm)'], ['BU Körpergewicht', 'number', null, 'Körpergewicht (kg)'],
       ['BU Motorradfahrer', 'select', JN, 'Motorradfahrer']];
+    var health = false;
     qs.forEach(function (q) {
-      if (q.length === 1) { f.push([q[0], 'sub']); return; }
-      f.push(['BU Frage ' + q[0], 'select', JN, q[0] + '. ' + q[1]]);
+      if (q.length === 1) { f.push([q[0], 'sub']); health = health || q[0].indexOf('C.') === 0; return; }
+      var k = 'BU Frage ' + q[0];
+      f.push([k, 'select', JN, q[0] + '. ' + q[1]]);
+      // Gesundheitsfragen: bei "Ja" gehen Unterfragen auf (f[4] = Feld, das "Ja" sein muss)
+      if (health && q[0] !== '20' && q[0] !== '28') [
+        [k + ' Diagnose', 'text', null, 'Welche Diagnose?', k],
+        [k + ' Diagnose seit', 'month', null, 'Wann wurde die Diagnose gestellt?', k],
+        [k + ' Letzte Beschwerden', 'month', null, 'Wann traten die letzten Beschwerden auf?', k],
+        [k + ' Behandlungsdauer', 'text', null, 'Wie lange wurde behandelt?', k],
+        [k + ' Medikamente', 'select', JN, 'Wurden Medikamente genommen?', k],
+        [k + ' Welche Medikamente', 'text', null, 'Welche Medikamente wurden genommen?', k + ' Medikamente']
+      ].forEach(function (d) { DEP[d[0]] = d[4]; f.push(d); });
       if (q[0] === '19') f.push(['BU GdB/MdE/WDB', 'text', null, 'Art (GdB, MdE, WDB) und Prozent']);
       if (q[0] === '20') f.push(['BU Dioptrien rechts', 'text', null, 'Dioptrien rechts'], ['BU Dioptrien links', 'text', null, 'Dioptrien links']);
       if (q[0] === '28') f.push(['BU Hausarzt', 'textarea', null, 'Hausarzt: Name, Anschrift, Fachrichtung']);
@@ -834,7 +848,7 @@ legend{float:left;width:100%;padding:0;margin-bottom:12px;font-size:13px;font-we
             tl.appendChild(r); tl.appendChild(document.createTextNode(o));
             tiles.appendChild(tl);
           });
-          fd.appendChild(tiles); grid.appendChild(fd);
+          fd.appendChild(tiles); grid.appendChild(dep(fd, f));
           return;
         }
         var l = el('label', f[3] || f[0], f[1] === 'textarea' ? 'wide' : ''), input;
@@ -850,13 +864,21 @@ legend{float:left;width:100%;padding:0;margin-bottom:12px;font-size:13px;font-we
         input.name = f[0];
         if (f[1] !== 'sum') input.value = vals[f[0]] || (f[0] === 'Berater/in' ? advisor() : '');
         l.appendChild(input);
-        grid.appendChild(l);
+        grid.appendChild(dep(l, f));
       });
       fs.appendChild(grid);
       capForm.appendChild(fs);
     });
     updateSums();
     dlg.showModal();
+  }
+  // Unterfrage nur sichtbar, wenn ihr Auslöser (und dessen Auslöser) mit "Ja" beantwortet ist
+  function shown(k, vals) { return !DEP[k] || (vals[DEP[k]] === 'Ja' && shown(DEP[k], vals)); }
+  function dep(node, f) {
+    if (!f[4]) return node;
+    node.classList.add('dep'); node.dataset.dep = f[0];
+    node.hidden = !shown(f[0], state[mode].form);
+    return node;
   }
   var sumFields = [];
   function eur(v) { return Number(v).toLocaleString('de-DE', { maximumFractionDigits: 2 }) + ' €'; }
@@ -872,6 +894,7 @@ legend{float:left;width:100%;padding:0;margin-bottom:12px;font-size:13px;font-we
     var t = e.target, vals = state[mode].form;
     if (t.type === 'checkbox') { vals[t.name] = t.checked ? 'ja' : ''; $('#' + t.name).hidden = !t.checked; }
     else vals[t.name] = t.value;
+    capForm.querySelectorAll('[data-dep]').forEach(function (n) { n.hidden = !shown(n.dataset.dep, vals); });
     if (t.name === 'Berater/in') { savedAdvisor = t.value.trim(); try { localStorage.setItem('berater', savedAdvisor); } catch (e) {} }
     updateSums();
     setTitle();
@@ -902,8 +925,10 @@ legend{float:left;width:100%;padding:0;margin-bottom:12px;font-size:13px;font-we
       var base = g[2] && g[2].base ? [['Grunddaten', 'sub']].concat(g[2].base.map(function (n) { return [n]; })) : [];
       base.concat(g[1]).forEach(function (f) {
         if (f[1] === 'sub') { row(t, f[0], '').className = 'sub'; return; }
+        if (!shown(f[0], vals)) return; // zugeklappte Unterfragen nicht drucken
         var v = vals[f[0]];
-        row(t, f[3] || f[0], !v ? '–' : f[0].indexOf('(€)') > -1 ? eur(v) : v);
+        if (v && f[1] === 'month') v = v.split('-').reverse().join('/'); // 2024-03 -> 03/2024
+        row(t, (f[4] ? '↳ ' : '') + (f[3] || f[0]), !v ? '–' : f[0].indexOf('(€)') > -1 ? eur(v) : v);
       });
       if (after) after();
     });
