@@ -197,6 +197,8 @@ legend{float:left;width:100%;padding:0;margin-bottom:12px;font-size:13px;font-we
 <circle cx="1132" cy="170" r="30"></circle>
 </g>
 
+<!-- Im privaten Rahmen wird der Schirm verkleinert (Steuerung in setMode) -->
+<g id="umbrella" style="transform-origin:640px 120px;transition:transform .4s">
 <path d="M640 382 L640 448 Q640 463 625 463 Q611 463 611 451" fill="none" stroke="#4a443d" stroke-width="6" stroke-linecap="round"></path>
 <line x1="640" y1="122" x2="640" y2="94" stroke="#4a443d" stroke-width="5" stroke-linecap="round"></line>
 
@@ -269,6 +271,7 @@ legend{float:left;width:100%;padding:0;margin-bottom:12px;font-size:13px;font-we
 <text data-n="6" x="1011" y="350">7</text>
 <text data-n="7" x="1115" y="343">8</text>
 </g>
+</g>
 
 
 
@@ -301,29 +304,46 @@ legend{float:left;width:100%;padding:0;margin-bottom:12px;font-size:13px;font-we
 
 <!-- Arzt im Kittel mit Stethoskop, hält den Schirmgriff -->
 <g id="homeBld" style="display:none" stroke-linecap="round" stroke-linejoin="round">
-<rect x="645" y="588" width="19" height="54" rx="4" fill="#3d3832"></rect>
-<rect x="672" y="588" width="19" height="54" rx="4" fill="#3d3832"></rect>
-<rect x="640" y="638" width="26" height="9" rx="4.5" fill="#2b2723"></rect>
-<rect x="670" y="638" width="26" height="9" rx="4.5" fill="#2b2723"></rect>
-<rect x="661" y="500" width="14" height="22" rx="4" fill="#e3bfa1"></rect>
-<line x1="648" y1="528" x2="628" y2="472" stroke="#827869" stroke-width="17"></line>
-<line x1="648" y1="528" x2="628" y2="472" stroke="#ffffff" stroke-width="13"></line>
-<path d="M644 524 Q668 512 692 524 L702 612 L634 612 Z" fill="#ffffff" stroke="#827869" stroke-width="1.6"></path>
-<polygon points="659,519 677,519 668,542" fill="#cfe2ea"></polygon>
-<polygon points="666,523 670,523 671.5,540 668,545 664.5,540" fill="#006e96"></polygon>
-<polyline points="657,520 664,550 668,612" fill="none" stroke="#827869" stroke-width="1.4"></polyline>
-<polyline points="679,520 672,550" fill="none" stroke="#827869" stroke-width="1.4"></polyline>
-<rect x="678" y="558" width="14" height="10" rx="1.5" fill="none" stroke="#827869" stroke-width="1.2"></rect>
-<line x1="682" y1="561" x2="682" y2="553" stroke="#006e96" stroke-width="2"></line>
-<path d="M655 522 C648 548 658 562 668 568 C678 562 688 548 681 522" fill="none" stroke="#4a443d" stroke-width="2.4"></path>
-<line x1="668" y1="568" x2="668" y2="580" stroke="#4a443d" stroke-width="2.4"></line>
-<circle cx="668" cy="584" r="5" fill="#827869" stroke="#4a443d" stroke-width="1.6"></circle>
-<line x1="690" y1="528" x2="702" y2="590" stroke="#827869" stroke-width="17"></line>
-<line x1="690" y1="528" x2="702" y2="590" stroke="#ffffff" stroke-width="13"></line>
-<circle cx="703" cy="597" r="6.5" fill="#e3bfa1"></circle>
-<circle cx="627" cy="466" r="7" fill="#e3bfa1"></circle>
-<circle cx="668" cy="490" r="18" fill="#e3bfa1"></circle>
-<path d="M650 492 C647 470 659 465 668 465 C680 465 690 471 686 492 C683 482 676 478 668 478 C659 478 653 483 650 492 Z" fill="#4a443d"></path>
+<g transform="translate(580.5 288.5) scale(0.63)">
+<rect x="113" y="410" width="34" height="152" rx="6" fill="#3d3832"></rect>
+<rect x="153" y="410" width="34" height="152" rx="6" fill="#3d3832"></rect>
+<rect x="104" y="554" width="46" height="15" rx="7.5" fill="#2b2723"></rect>
+<rect x="150" y="554" width="46" height="15" rx="7.5" fill="#2b2723"></rect>
+<rect x="139" y="112" width="22" height="38" rx="6" fill="#e3bfa1"></rect>
+<path d="M132,144 L150,192 L168,144 Z" fill="#cfe2ea"></path>
+<path d="M146,152 L154,152 L157,196 L150,206 L143,196 Z" fill="#006e96"></path>
+<path d="M145,148 L155,148 L153,157 L147,157 Z" fill="#006e96"></path>
+<path d="M100,162 Q106,148 132,144 L150,192 L168,144 Q194,148 200,162 L212,420 L88,420 Z" fill="#ffffff" stroke="#827869" stroke-width="4"></path>
+<path d="M132,144 L150,192 L139,204 L122,158 Z" fill="#f4f1ec" stroke="#827869" stroke-width="4"></path>
+<path d="M168,144 L150,192 L161,204 L178,158 Z" fill="#f4f1ec" stroke="#827869" stroke-width="4"></path>
+<line x1="150" y1="198" x2="150" y2="418" stroke="#827869" stroke-width="3"></line>
+<path d="M98,340 L132,340 M168,340 L202,340" stroke="#827869" stroke-width="3"></path>
+<rect x="171" y="196" width="5" height="22" rx="2" fill="#006e96"></rect>
+<rect x="179" y="200" width="5" height="18" rx="2" fill="#4a443d"></rect>
+<path d="M166,214 L166,238 L194,238 L194,214 Z" fill="#ffffff" stroke="#827869" stroke-width="3"></path>
+<rect x="106" y="196" width="24" height="13" rx="2" fill="#006e96"></rect>
+<path d="M136,146 C127,180 133,210 150,222 C167,210 173,180 164,146 M150,222 C149,252 158,266 170,268" fill="none" stroke="#4a443d" stroke-width="6"></path>
+<circle cx="176" cy="270" r="9" fill="#cfc8bf" stroke="#4a443d" stroke-width="4"></circle>
+<path d="M100,170 L60,204 L74,136" fill="none" stroke="#827869" stroke-width="34"></path>
+<path d="M100,170 L60,204 L74,136" fill="none" stroke="#ffffff" stroke-width="26"></path>
+<path d="M200,168 L212,250 L216,322" fill="none" stroke="#827869" stroke-width="34"></path>
+<path d="M200,168 L212,250 L216,322" fill="none" stroke="#ffffff" stroke-width="26"></path>
+<circle cx="217" cy="337" r="12" fill="#e3bfa1"></circle>
+<circle cx="77" cy="126" r="13" fill="#e3bfa1"></circle>
+<circle cx="114" cy="94" r="7" fill="#e3bfa1"></circle>
+<circle cx="186" cy="94" r="7" fill="#e3bfa1"></circle>
+<circle cx="150" cy="90" r="36" fill="#e3bfa1"></circle>
+<path d="M114,88 C112,55 135,44 152,45 C175,45 190,60 187,88 C182,74 170,66 150,68 C134,68 122,74 114,88 Z" fill="#4a443d"></path>
+<path d="M131,83 Q137,79 143,83 M157,83 Q163,79 169,83" fill="none" stroke="#4a443d" stroke-width="3.5"></path>
+<circle cx="137" cy="92" r="3.5" fill="#2b2723"></circle>
+<circle cx="163" cy="92" r="3.5" fill="#2b2723"></circle>
+<path d="M139,109 Q150,117 161,109" fill="none" stroke="#7a3b2e" stroke-width="3.5"></path>
+<g fill="none" stroke="#4a443d" stroke-width="3">
+<rect x="127" y="85" width="20" height="15" rx="5"></rect>
+<rect x="153" y="85" width="20" height="15" rx="5"></rect>
+<path d="M147,91 L153,91 M127,90 L116,88 M173,90 L184,88"></path>
+</g>
+</g>
 </g>
 </svg>
 <div id="rain" aria-hidden="true" style="position:absolute;left:0;top:0;width:1280px;height:680px;pointer-events:none"></div>
@@ -412,11 +432,11 @@ legend{float:left;width:100%;padding:0;margin-bottom:12px;font-size:13px;font-we
     },
     privat: {
       items: [
-        ['Risikoleben', 'Absicherung von Familie und Finanzierung'],
+        ['Risikoleben', 'Absicherung der Finanzierung'],
         ['Privathaftpflicht', 'Schäden an Dritten im Alltag'],
         ['Berufsunfähigkeit', 'Einkommen, wenn Sie nicht mehr praktizieren können'],
         ['Krankenversicherung', 'Private oder gesetzliche Krankenversicherung'],
-        ['Altersvorsorge', 'Ergänzung zum Versorgungswerk'],
+        ['Altersvorsorge', 'Ergänzung zu Versorgungswerk und Praxis'],
         ['Krankentagegeld', 'Einkommen bei längerer Krankheit']
       ],
       // 6 Bausteine auf 8 Schirmsegmente: die schmalen Außensegmente werden paarweise zusammengelegt
@@ -460,15 +480,15 @@ legend{float:left;width:100%;padding:0;margin-bottom:12px;font-size:13px;font-we
       'Kfz-Haftpflicht für Schäden an Dritten sowie Teil- oder Vollkasko für Schäden am eigenen Fahrzeug; mehrere Fahrzeuge auch gebündelt als Flottenvertrag.'],
     'bKV': ['Ein Mitarbeiter-Benefit, der im Alltag spürbar ist – stärkt Bindung und Arbeitgeberattraktivität bei überschaubaren Kosten.',
       'Arbeitgeberfinanzierte Gesundheitsleistungen für Mitarbeiter, z. B. Zahnersatz, Vorsorge, Brille oder ein jährliches Gesundheitsbudget.'],
-    'Risikoleben': ['Praxis- und Immobilienkredite laufen weiter, auch wenn Sie nicht mehr da sind. Die Familie soll weder Praxis noch Haus verkaufen müssen.',
-      'Zahlt im Todesfall die vereinbarte Summe an Hinterbliebene oder Bank – günstig, weil reiner Todesfallschutz.'],
+    'Risikoleben': ['Praxis- und Immobilienkredite laufen weiter, auch wenn Sie nicht mehr da sind. Die Restschuld der Finanzierung bleibt bestehen.',
+      'Zahlt im Todesfall die vereinbarte Summe, mit der die offene Finanzierung abgelöst wird – günstig, weil reiner Todesfallschutz.'],
     'Privathaftpflicht': ['Wer einem anderen schadet, haftet unbegrenzt mit dem gesamten Vermögen. Schon ein Fahrradunfall mit Personenschaden kann existenzbedrohend werden.',
       'Zahlt berechtigte Ansprüche und wehrt unberechtigte ab – für Sie und Ihre Familie im privaten Alltag.'],
     'Berufsunfähigkeit': ['Ihre Arbeitskraft ist Ihr größtes Kapital. Das Versorgungswerk zahlt in der Regel nur bei vollständiger Berufsunfähigkeit, also wenn Sie gar nicht mehr ärztlich tätig sein können.',
       'Zahlt eine monatliche Rente, sobald Sie Ihren Beruf zu mindestens 50 % nicht mehr ausüben können – bezogen auf Ihre konkrete ärztliche Tätigkeit.'],
     'Krankenversicherung': ['Die Entscheidung zwischen GKV und PKV wirkt über Jahrzehnte und prägt Beitrag, Leistung und Familienabsicherung.',
       'Übernimmt die Kosten für ambulante, stationäre und zahnärztliche Behandlung – Umfang je nach Tarif.'],
-    'Altersvorsorge': ['Das Versorgungswerk sichert eine Grundversorgung, die den gewohnten Lebensstandard meist nicht hält. Auf den Praxisverkaufserlös als Rente ist kein Verlass.',
+    'Altersvorsorge': ['Ihre Altersversorgung ruht auf mehreren Säulen: dem Versorgungswerk als Grundversorgung und Ihrer Praxis, deren Verkaufserlös in den Ruhestand einfließt.',
       'Baut zusätzliches Vermögen für den Ruhestand auf, z. B. steuerlich gefördert über die Basisrente oder flexibel über Fonds.'],
     'Krankentagegeld': ['Als Selbstständige erhalten Sie keine Lohnfortzahlung. Schon nach wenigen Wochen Krankheit fehlt das Einkommen für Lebenshaltung und Verpflichtungen.',
       'Zahlt ab einem vereinbarten Tag ein festes Tagegeld für jeden Tag der Arbeitsunfähigkeit.']
@@ -477,6 +497,7 @@ legend{float:left;width:100%;padding:0;margin-bottom:12px;font-size:13px;font-we
   var N = 8; // Schirmsegmente
   MODES.praxis.seg = [0, 1, 2, 3, 4, 5, 6, 7]; MODES.praxis.hide = [];
   // [Segment, x, Stopp auf Schirm, Stopp ohne Schirm (Dach/Boden), Verzögerung ms, Dauer ms]; Segment -1 = außerhalb
+  var HOME_K = .75; // Schirmgröße im privaten Rahmen, damit der Arzt im Verhältnis passt
   var DROPS = [[0,126,318,646,1609,1132],[0,143,283,646,1359,967],[0,157,263,646,744,1236],[0,171,249,646,575,1198],[0,182,239,646,1414,1100],[0,201,223,646,696,1282],[1,210,217,646,1744,955],[1,227,206,646,1584,1078],[1,241,198,646,560,1187],[1,256,191,646,1024,1281],[1,274,182,646,730,1128],[1,286,177,646,707,1159],[1,302,171,646,1726,1038],[1,322,164,646,1409,1180],[2,337,158,646,684,1215],[2,346,156,646,340,1051],[2,366,150,646,1748,1194],[2,377,147,646,161,1293],[2,395,142,646,351,1265],[2,411,139,646,1189,1214],[2,425,136,462,861,1104],[2,439,133,462,1586,1276],[2,451,131,462,56,1050],[2,465,129,462,903,1269],[3,484,126,462,448,1042],[3,499,124,462,85,1191],[3,517,122,462,339,977],[3,531,121,462,226,1112],[3,547,120,462,988,1049],[3,558,119,462,850,1188],[3,572,118,462,1356,1263],[3,584,117,462,418,1071],[3,604,117,462,765,950],[3,616,116,462,570,1159],[3,635,116,462,1410,1230],[4,646,116,462,73,1231],[4,663,116,462,194,1101],[4,678,117,462,695,1247],[4,691,117,462,720,1016],[4,707,118,462,1665,1238],[4,723,119,462,756,1189],[4,734,120,462,1220,1145],[4,753,121,462,407,1018],[4,768,123,462,719,1288],[4,778,124,462,221,1116],[4,798,126,462,1259,1226],[5,809,128,462,1289,1238],[5,826,131,462,884,1065],[5,842,134,462,982,1144],[5,856,136,462,1750,1031],[5,872,140,646,532,1104],[5,887,143,646,850,960],[5,900,146,646,629,1201],[5,920,152,646,293,1194],[5,928,154,646,1351,1268],[5,950,161,646,502,1100],[6,958,163,646,279,1150],[6,973,169,646,1090,1236],[6,990,176,646,971,968],[6,1005,182,646,548,1029],[6,1024,191,646,585,1100],[6,1037,198,646,972,1215],[6,1054,207,646,1236,1010],[6,1064,213,646,258,1103],[7,1081,225,646,1450,1122],[7,1097,238,646,1497,1221],[7,1107,247,646,716,1134],[7,1126,267,646,1664,1252],[7,1136,281,646,5,1079],[7,1153,316,646,1404,1005],[-1,20,646,646,1818,1279],[-1,48,646,646,391,1007],[-1,78,646,646,879,1218],[-1,100,646,646,1218,1294],[-1,1180,646,646,1411,1246],[-1,1205,646,646,1758,1197],[-1,1232,646,646,974,1200],[-1,1262,646,646,1397,1100]];
 
   // Stand je Ansicht merken, damit der Wechsel nichts verliert
@@ -515,6 +536,73 @@ legend{float:left;width:100%;padding:0;margin-bottom:12px;font-size:13px;font-we
   });
   paFields.push(['Gewinn', 'sub'], [PA_GEWINN, 'number'],
     ['Summe Kosten und Gewinn (€)', 'sum', paAll.concat(PA_GEWINN)]);
+  // BU-Risikovoranfrage: nur die BU-relevanten Fragen des kombinierten Fragebogens BU/KV (Nummern wie im Original)
+  var BU_Q = [
+    ['A. Sonderrisiken'],
+    ['1', 'Sind Sie Gefahren im Beruf ausgesetzt? (z. B. Flugrisiko, Chemikalien, radioaktive Stoffe/Strahlen, Aufenthalt in Krisengebieten)'],
+    ['2', 'Sind Sie Gefahren bei Sport oder Hobby ausgesetzt? (z. B. Drachenfliegen, Fallschirmspringen, Rennfahrten, Bergsteigen, Klettern, Ski, Tauchen, Wassersport, Hochseesegeln, Extrem- oder Kampfsport, organisierte Wettkämpfe, Reiten, Motorrad über 50 ccm, Quad oder Trike)'],
+    ['3', 'Beabsichtigen Sie, innerhalb der nächsten 12 Monate in Krisengebiete oder länger als 3 Monate in ein Land außerhalb der EU zu reisen?'],
+    ['B. Versicherungen bei anderen Gesellschaften'],
+    ['4', 'Haben Sie bereits eine Lebens- oder Invaliditätsversicherung (Todesfall, Berufs-, Dienst- oder Erwerbsunfähigkeit, Grundfähigkeit, Pflegebedürftigkeit, Unfallinvalidität), auch über die betriebliche Altersversorgung, oder ist eine solche beantragt?'],
+    ['5', 'Wurden in den letzten 5 Jahren Versicherungsanträge bei anderen Gesellschaften zu erschwerten Bedingungen angeboten, angenommen, zurückgestellt oder abgelehnt?'],
+    ['C. Psyche, Sucht, Infektionen'],
+    ['6', 'Wurde in den letzten 5 Jahren (Continentale, Volkswohlbund, Signal Iduna, Zurich: 10 Jahre) eine psychotherapeutische oder psychiatrische Behandlung angeraten oder durchgeführt, oder bestanden/bestehen Krankheiten, Störungen oder Beschwerden der Psyche? (z. B. Depression, psychosomatische Störung, Persönlichkeits- oder Essstörung, Burn-out, Erschöpfungszustände, ADS/ADHS)'],
+    ['7', 'Haben Sie in den letzten 5 Jahren (Continentale: 10 Jahre) einen Selbsttötungsversuch unternommen?'],
+    ['8', 'Nehmen oder nahmen Sie in den letzten 10 Jahren Drogen oder Betäubungsmittel ein?'],
+    ['9', 'Wurden Sie in den letzten 10 Jahren wegen einer Suchterkrankung oder der Folgen von Alkohol, Betäubungsmitteln oder Drogen beraten oder behandelt, oder wurde dies angeraten?'],
+    ['11', 'Wurde jemals eine HIV-Infektion festgestellt oder steht ein Testergebnis aus?'],
+    ['12. Beratungen, Untersuchungen (auch Kontroll- und Nachsorge) oder Behandlungen in den letzten 5 Jahren bei Ärzten, Zahnärzten, Heilpraktikern, Physio-, Psycho- oder sonstigen Therapeuten, oder angeraten/vorgesehen, wegen Krankheiten, Störungen oder Beschwerden …'],
+    ['12a', '… der Wirbelsäule, des Rückens, des Nackens? (z. B. Skoliose, Hexenschuss, Bandscheibenvorfall, Morbus Bechterew)'],
+    ['12b', '… der Gelenke, Sehnen, Knochen oder Muskulatur? (z. B. Arthrose, Bandverletzung, Arthritis, Fibromyalgie, Sehnenscheidenentzündung, Rheuma, Meniskus)'],
+    ['12c', '… des Herzens, des Kreislaufs oder der Gefäße? (z. B. Bluthochdruck, Herzinfarkt, Herzfehler, Durchblutungsstörung, Thrombose)'],
+    ['12d', '… des Nervensystems, des Gehirns oder des Rückenmarks? (z. B. Schlaganfall, Epilepsie, MS, Migräne, Schwindel, chronische Schmerzen)'],
+    ['12e', '… des Blutes oder im Rahmen von Tumorerkrankungen? (z. B. Anämie, Gerinnungsstörung, Leukämie, Krebs, Zysten, Polypen, Lymphknotenschwellung)'],
+    ['12f', '… im Rahmen von Infektions- oder Autoimmunerkrankungen? (z. B. Lupus, Sklerodermie, Tuberkulose, Borreliose, Tropen- und Geschlechtskrankheiten)'],
+    ['12g', '… der Atemwege? (z. B. Asthma, chronische Bronchitis, Schlafapnoe)'],
+    ['12h', '… der Haut oder Allergien? (z. B. auffällige Muttermale, Schuppenflechte, Neurodermitis, Heuschnupfen)'],
+    ['12i', '… der Verdauungsorgane? (z. B. erhöhte Leberwerte, Hepatitis, Gastritis, Colitis ulcerosa, Morbus Crohn, Reflux)'],
+    ['12j', '… der Harn- und Geschlechtsorgane? (z. B. Nierenfunktion, Steinleiden, auffälliger PAP-Abstrich, Knoten in der Brust, erhöhter PSA-Wert)'],
+    ['12k', '… des Stoffwechsels oder des Hormonhaushalts? (z. B. Diabetes, Gicht, Schilddrüse, erhöhte Blutfette)'],
+    ['12l', '… der Augen? (z. B. erhöhter Augendruck, Netzhauterkrankung, Entzündung des Sehnervs)'],
+    ['12m', '… des Halses, der Nase, der Ohren? (z. B. chronische Heiserkeit, Schwerhörigkeit, Tinnitus, Gleichgewichtsstörungen)'],
+    ['12n', '… infolge eines Unfalls, einer Verstrahlung oder Vergiftung?'],
+    ['Krankenhaus, Operationen, Medikamente'],
+    ['13', 'Fanden in den letzten 10 Jahren Krankenhaus-, Reha- oder Kuraufenthalte, stationäre Untersuchungen oder Behandlungen oder ambulante Operationen statt, oder wurden sie angeraten?'],
+    ['14', 'Sind derzeit Untersuchungen, Behandlungen, Kuren oder Operationen (ambulant oder stationär) notwendig, ärztlich empfohlen oder beabsichtigt?'],
+    ['15', 'Nahmen Sie in den letzten 5 Jahren oder nehmen Sie wiederholt oder regelmäßig Medikamente ein bzw. wurden sie verordnet? (Name, Dosis, Diagnose und Arzt unten angeben)'],
+    ['16', 'Waren Sie in den letzten 3 Jahren mehr als 10 Kalendertage ununterbrochen erkrankt oder arbeitsunfähig?'],
+    ['17', 'Hatten Sie in den letzten 6 Monaten Beschwerden in einem der Bereiche aus Frage 12, ohne einen Arzt oder Behandler aufzusuchen?'],
+    ['Gebrechen, Behinderung, Augen'],
+    ['18', 'Bestehen oder bestanden körperliche Gebrechen (z. B. Fehlen oder Teilverlust von Gliedmaßen oder Organen), geistige Beeinträchtigungen, erworbene oder angeborene Organfehler (z. B. Herzfehler, Einzelniere) oder Entwicklungsstörungen?'],
+    ['19', 'Besteht ein Grad der Behinderung, eine Erwerbsminderung, Wehrdienstbeschädigung oder Pflegebedürftigkeit, oder beziehen/bezogen Sie Renten aus gesundheitlichen Gründen bzw. ist eine solche beantragt? (Kopie des Anerkennungsbescheids beifügen)'],
+    ['20', 'Besteht eine Fehlsichtigkeit?'],
+    ['Hausarzt'],
+    ['28', 'Haben Sie einen Hausarzt oder Behandler, der über Ihre Gesundheit umfassend informiert ist?']
+  ];
+  var buFields = [
+    ['Interessent', 'sub'],
+    ['BU Geschlecht', 'select', ['weiblich', 'männlich'], 'Geschlecht'],
+    ['BU Ausgeübte Tätigkeit', 'text', null, 'Ausgeübte Tätigkeit / Beruf'], ['BU Erlernter Beruf', 'text', null, 'Erlernter Beruf'],
+    ['BU Akademischer Abschluss', 'text', null, 'Akademischer Abschluss'], ['BU Reisetätigkeit', 'text', null, 'Reisetätigkeit'],
+    ['BU Anteil Bürotätigkeit', 'number', null, 'Anteil Bürotätigkeit (%)'], ['BU Anteil körperliche Tätigkeit', 'number', null, 'Anteil körperliche Tätigkeit (%)'],
+    ['BU Personalverantwortung', 'number', null, 'Personalverantwortung für (Anzahl Mitarbeiter)'], ['BU Anzahl Gehälter', 'number', null, 'Anzahl Gehälter pro Jahr'],
+    ['BU Monatliches Netto (€)', 'number', null, 'Monatliches Netto (€)'],
+    ['Gewünschter Versicherungsschutz', 'sub'],
+    ['BU Tarif / Endalter', 'text', null, 'Tarif / Endalter'], ['BU Todesfallkapital (€)', 'number', null, 'Todesfallkapital (€)'],
+    ['BU Versicherungsbeginn', 'date', null, 'Versicherungsbeginn'],
+    ['Körperdaten', 'sub'],
+    ['BU Körpergröße', 'number', null, 'Körpergröße (cm)'], ['BU Körpergewicht', 'number', null, 'Körpergewicht (kg)'],
+    ['BU Motorradfahrer', 'select', JN, 'Motorradfahrer']
+  ];
+  BU_Q.forEach(function (q) {
+    if (q.length === 1) { buFields.push([q[0], 'sub']); return; }
+    buFields.push(['BU Frage ' + q[0], 'select', JN, q[0] + '. ' + q[1]]);
+    if (q[0] === '19') buFields.push(['BU GdB/MdE/WDB', 'text', null, 'Art (GdB, MdE, WDB) und Prozent']);
+    if (q[0] === '20') buFields.push(['BU Dioptrien rechts', 'text', null, 'Dioptrien rechts'], ['BU Dioptrien links', 'text', null, 'Dioptrien links']);
+    if (q[0] === '28') buFields.push(['BU Hausarzt', 'textarea', null, 'Hausarzt: Name, Anschrift, Fachrichtung']);
+  });
+  buFields.push(['Ergänzende Angaben zu den mit „Ja“ beantworteten Fragen', 'sub'],
+    ['BU Ergänzende Angaben', 'textarea', null, 'Je Frage-Nr.: Diagnose/Beschwerden/OP/Medikament, ambulant von–bis, stationär von–bis, arbeitsunfähig von–bis, beschwerdefrei seit, Behandler (Name, Anschrift)']);
   var FORM = {
     praxis: [
       ['Beratung', [['Berater/in', 'text']]],
@@ -538,6 +626,11 @@ legend{float:left;width:100%;padding:0;margin-bottom:12px;font-size:13px;font-we
         ['Berufsstatus', 'select', ['niedergelassen', 'angestellt', 'in Weiterbildung', 'Studium']]]],
       ['Absicherung', [['Fachrichtung', 'text'], ['Bruttoeinkommen pro Jahr (€)', 'number'], ['Gewünschte BU-Rente pro Monat (€)', 'number'],
         ['Krankenversicherung', 'select', ['GKV', 'PKV']], ['Raucher', 'select', JN]]],
+        ['Risikofragebogen Berufsunfähigkeit', buFields, {
+        key: 'buOn', toggle: 'Risikofragebogen BU aufnehmen', sheet: true,
+        base: ['Geburtsdatum', 'Berufsstatus', 'Fachrichtung', 'Bruttoeinkommen pro Jahr (€)', 'Gewünschte BU-Rente pro Monat (€)', 'Raucher'],
+        hint: 'Für die anonyme Risikovoranfrage. Jede mit „Ja“ beantwortete Frage bitte unten unter „Ergänzende Angaben“ erläutern (Diagnose, Zeitraum ambulant/stationär, arbeitsunfähig, beschwerdefrei seit, Behandler).'
+      }],
       ['Sonstiges', [['Weitere Verträge / Ablauf', 'textarea'], ['Bemerkungen', 'textarea']]]
     ]
   };
@@ -626,6 +719,7 @@ legend{float:left;width:100%;padding:0;margin-bottom:12px;font-size:13px;font-we
     }
     $('#praxisBld').style.display = m === 'praxis' ? '' : 'none';
     $('#homeBld').style.display = m === 'privat' ? '' : 'none';
+    $('#umbrella').style.transform = m === 'privat' ? 'scale(' + HOME_K + ')' : '';
     $('#scene').setAttribute('aria-label', M.aria);
     document.querySelectorAll('.seg button').forEach(function (b) { b.setAttribute('aria-pressed', b.dataset.mode === m); });
     render();
@@ -667,10 +761,13 @@ legend{float:left;width:100%;padding:0;margin-bottom:12px;font-size:13px;font-we
     });
     drops.forEach(function (o) {
       var d = o.d, open = d[0] < 0 || !closed(covered[M.seg[d[0]]]);
-      // Privat: Tropfen treffen Kopf (±18) oder Schultern (±34) des Arztes, sonst den Boden
-      var dx = Math.abs(d[1] - 668);
-      var floor = mode === 'privat' && d[3] === 462 ? (dx < 18 ? 468 : dx < 34 ? 520 : 646) : d[3];
-      o.lane.style.height = (open ? floor : d[2]) + 'px';
+      // Privat: Schirm ist um HOME_K um die Spitze (640|120) verkleinert, Tropfen wandern mit;
+      // offene Tropfen treffen Kopf (±23) oder Schultern (±32) des Arztes (Mitte 675), sonst den Boden
+      var home = mode === 'privat' && d[0] >= 0, k = home ? HOME_K : 1;
+      var x = 640 + (d[1] - 640) * k, stop = 120 + (d[2] - 120) * k, dx = Math.abs(x - 675);
+      var floor = !home ? d[3] : dx < 23 ? 322 : dx < 32 ? 380 : 646;
+      o.lane.style.left = (x - 1) + 'px';
+      o.lane.style.height = (open ? floor : stop) + 'px';
       o.drop.classList.toggle('leak', d[0] >= 0 && open);
     });
     $('#badge').style.display = covered.every(function (s) { return s === 1; }) ? 'flex' : 'none';
@@ -716,9 +813,9 @@ legend{float:left;width:100%;padding:0;margin-bottom:12px;font-size:13px;font-we
       g[1].forEach(function (f) {
         if (f[1] === 'sub') { grid.appendChild(el('div', f[0], 'sub')); return; }
         if (f[1] === 'select') { // Auswahl als antippbare Kacheln statt Dropdown
-          var fd = el('div', null, 'field' + (f[2].length > 2 ? ' wide' : '')), tiles = el('div', null, 'tiles');
-          fd.appendChild(el('span', f[0]));
-          tiles.setAttribute('role', 'radiogroup'); tiles.setAttribute('aria-label', f[0]);
+          var fd = el('div', null, 'field' + (f[2].length > 2 || (f[3] || '').length > 40 ? ' wide' : '')), tiles = el('div', null, 'tiles');
+          fd.appendChild(el('span', f[3] || f[0]));
+          tiles.setAttribute('role', 'radiogroup'); tiles.setAttribute('aria-label', f[3] || f[0]);
           f[2].forEach(function (o) {
             var tl = el('label', null, 'tile'), r = el('input');
             r.type = 'radio'; r.name = f[0]; r.value = o; r.checked = vals[f[0]] === o;
@@ -774,24 +871,29 @@ legend{float:left;width:100%;padding:0;margin-bottom:12px;font-size:13px;font-we
   $('#infoClose').addEventListener('click', function () { $('#infoDlg').close(); });
 
   function row(t, k, v) { var tr = el('tr'); tr.appendChild(el('td', k)); tr.appendChild(el('td', v)); return t.appendChild(tr); }
-  // Datenaufnahme als zweiter Teil der Dokumentation, auf neuer Seite; leere Bereiche entfallen
-  function appendData(s) {
+  // Datenaufnahme als zweiter Teil der Dokumentation, auf neuer Seite; leere Bereiche entfallen.
+  // sheet: nur Bereiche mit eigenem Blatt (z. B. BU-Fragebogen), je Bereich neue Seite, danach after()
+  function appendData(s, sheet, after) {
     var vals = state[mode].form, t;
     var groups = formGroups().filter(function (g) {
+      if (!!(g[2] && g[2].sheet) !== !!sheet) return false;
       if (g[2] && !vals[g[2].key]) return false; // nicht angewählter Bereich kommt nicht aufs Blatt
       return g[1].some(function (f) { return f[1] !== 'sub' && vals[f[0]]; });
     });
     if (!groups.length) return;
-    s.appendChild(el('h1', 'Datenaufnahme für das Angebot', 'newpage'));
+    if (!sheet) s.appendChild(el('h1', 'Datenaufnahme für das Angebot', 'newpage'));
     groups.forEach(function (g) {
-      s.appendChild(el('h2', g[0]));
+      s.appendChild(sheet ? el('h1', g[0], 'newpage') : el('h2', g[0]));
       t = s.appendChild(el('table'));
       if (g[2]) row(t, 'Hinweis', g[2].hint);
-      g[1].forEach(function (f) {
+      // Grunddaten aus anderen Bereichen wiederholen, damit das Blatt allein verschickt werden kann
+      var base = g[2] && g[2].base ? [['Grunddaten', 'sub']].concat(g[2].base.map(function (n) { return [n]; })) : [];
+      base.concat(g[1]).forEach(function (f) {
         if (f[1] === 'sub') { row(t, f[0], '').className = 'sub'; return; }
         var v = vals[f[0]];
         row(t, f[3] || f[0], !v ? '–' : f[0].indexOf('(€)') > -1 ? eur(v) : v);
       });
+      if (after) after();
     });
   }
   function explained() {
@@ -877,17 +979,21 @@ legend{float:left;width:100%;padding:0;margin-bottom:12px;font-size:13px;font-we
     appendData(s);
 
     // Unterschriften: digital gezeichnet (Bild + Zeitpunkt) oder leer für Unterschrift auf Papier
-    var sign = s.appendChild(el('div', null, 'sign')), sg = state[mode].sign,
-      ort = (vals['PLZ / Ort'] || '').replace(/^\d+\s*/, '');
-    [[sg[0] ? (ort ? ort + ', ' : '') + new Date().toLocaleDateString('de-DE') : '', 'Ort, Datum'],
-     [sg[0], n || (mode === 'praxis' ? 'Praxisinhaber/in' : 'Kunde/Kundin')],
-     [sg[1], advisor() + ', HORBACH']].forEach(function (x, k) {
-      var d = sign.appendChild(el('div')), v = d.appendChild(el('div', null, 'v'));
-      if (k === 0) v.textContent = x[0];
-      else if (x[0]) { var im = v.appendChild(el('img')); im.src = x[0][0]; im.alt = 'Unterschrift'; }
-      d.appendChild(el('div', x[1] + (k && x[0] ? ' · digital unterschrieben ' + x[0][1] : ''), 'l'));
-    });
+    var sg = state[mode].sign, ort = (vals['PLZ / Ort'] || '').replace(/^\d+\s*/, '');
+    function signBlock() {
+      var sign = s.appendChild(el('div', null, 'sign'));
+      [[sg[0] ? (ort ? ort + ', ' : '') + new Date().toLocaleDateString('de-DE') : '', 'Ort, Datum'],
+       [sg[0], n || (mode === 'praxis' ? 'Praxisinhaber/in' : 'Kunde/Kundin')],
+       [sg[1], advisor() + ', HORBACH']].forEach(function (x, k) {
+        var d = sign.appendChild(el('div')), v = d.appendChild(el('div', null, 'v'));
+        if (k === 0) v.textContent = x[0];
+        else if (x[0]) { var im = v.appendChild(el('img')); im.src = x[0][0]; im.alt = 'Unterschrift'; }
+        d.appendChild(el('div', x[1] + (k && x[0] ? ' · digital unterschrieben ' + x[0][1] : ''), 'l'));
+      });
+    }
+    signBlock();
     s.appendChild(el('p', DISC, 'disc'));
+    appendData(s, true, signBlock); // Einzelblätter mit eigener Unterschrift ans Ende
   }
   // Erst ansehen, dann drucken: die Vorschau zeigt eine Kopie des Druckblatts
   function preview(build, title) {
