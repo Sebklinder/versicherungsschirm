@@ -624,6 +624,14 @@ legend{float:left;width:100%;padding:0;margin-bottom:12px;font-size:13px;font-we
   var paHealth = [['Person', 'sub'], ['GF Geburtsdatum', 'date', null, 'Geburtsdatum'],
     ['GF Geschlecht', 'select', ['weiblich', 'männlich'], 'Geschlecht']]
     .concat(healthFields(BU_Q.slice(BU_Q.findIndex(function (q) { return q[0] === 'C. Psyche, Sucht, Infektionen'; }))));
+  // Zweite Person (z. B. BAG-Partner/in): dieselben Fragen, Feldnamen mit Präfix, damit sich die Antworten nicht mischen
+  var P2 = '2. Person: ';
+  var paHealth2 = [['Person', 'sub'], [P2 + 'Name', 'text', null, 'Name, Vorname']].concat(paHealth.slice(1).map(function (f) {
+    if (f[1] === 'sub') return f;
+    var g = f.slice(); g[0] = P2 + f[0];
+    if (f[4]) DEP[g[0]] = g[4] = P2 + f[4];
+    return g;
+  }));
   var FORM = {
     praxis: [
       ['Beratung', [['Berater/in', 'text']]],
@@ -641,6 +649,11 @@ legend{float:left;width:100%;padding:0;margin-bottom:12px;font-size:13px;font-we
         key: 'paGf', toggle: 'Gesundheitsfragen zur Praxisausfallversicherung aufnehmen', sheet: true,
         base: ['Inhaber/in', 'Fachrichtung', 'Niedergelassen seit'],
         hint: 'Angaben zur versicherten Person (Praxisinhaber/in). Jede mit „Ja“ beantwortete Frage bitte unten unter „Ergänzende Angaben“ erläutern (Diagnose, Zeitraum ambulant/stationär, arbeitsunfähig, beschwerdefrei seit, Behandler).'
+      }],
+      ['Gesundheitsfragen Praxisausfallversicherung – 2. Person', paHealth2, {
+        key: 'paGf2', toggle: 'Zweite Person aufnehmen (z. B. Partner/in in der BAG)', sheet: true,
+        base: ['Praxisname', 'Rechtsform'],
+        hint: 'Angaben zur zweiten versicherten Person, z. B. Partner/in einer Berufsausübungsgemeinschaft. Jede mit „Ja“ beantwortete Frage bitte unten unter „Ergänzende Angaben“ erläutern.'
       }],
       ['Sonstiges', [['Weitere Verträge / Ablauf', 'textarea'], ['Bemerkungen', 'textarea']]]
     ],
@@ -930,7 +943,7 @@ legend{float:left;width:100%;padding:0;margin-bottom:12px;font-size:13px;font-we
         if (v && f[1] === 'month') v = v.split('-').reverse().join('/'); // 2024-03 -> 03/2024
         row(t, (f[4] ? '↳ ' : '') + (f[3] || f[0]), !v ? '–' : f[0].indexOf('(€)') > -1 ? eur(v) : v);
       });
-      if (after) after();
+      if (after) after(g);
     });
   }
   function explained() {
@@ -1017,10 +1030,11 @@ legend{float:left;width:100%;padding:0;margin-bottom:12px;font-size:13px;font-we
 
     // Unterschriften: digital gezeichnet (Bild + Zeitpunkt) oder leer für Unterschrift auf Papier
     var sg = state[mode].sign, ort = (vals['PLZ / Ort'] || '').replace(/^\d+\s*/, '');
-    function signBlock() {
+    function signBlock(g) {
+      var p2 = g && g[2].key === 'paGf2'; // Blatt der 2. Person: sie unterschreibt selbst, auf Papier
       var sign = s.appendChild(el('div', null, 'sign'));
       [[sg[0] ? (ort ? ort + ', ' : '') + new Date().toLocaleDateString('de-DE') : '', 'Ort, Datum'],
-       [sg[0], n || (mode === 'praxis' ? 'Praxisinhaber/in' : 'Kunde/Kundin')],
+       [p2 ? null : sg[0], p2 ? vals[P2 + 'Name'] || '2. Person' : n || (mode === 'praxis' ? 'Praxisinhaber/in' : 'Kunde/Kundin')],
        [sg[1], advisor() + ', HORBACH']].forEach(function (x, k) {
         var d = sign.appendChild(el('div')), v = d.appendChild(el('div', null, 'v'));
         if (k === 0) v.textContent = x[0];
